@@ -8,7 +8,7 @@ import MessagesPage from "./pages/auth/MessageManagementPage";
 import UserHomePage from "./pages/auth/UserHomePage";
 import ContactUsPage from "./pages/auth/ContactUsPage";
 import VerifyEmailPage from "./pages/auth/VerifyEmailPage";
-
+import MessageManagementPage from "./pages/auth/MessageManagementPage";
 
 const App = () => {
   return (
@@ -19,7 +19,6 @@ const App = () => {
       <Route path="/users/register" element={<RegisterPage />} />
       <Route path="/contactus" element={<ContactUsPage />} />{" "}
       <Route path="/verify-email" element={<VerifyEmailPage />} />
-
       {/* User Routes (Authenticated Users Only) */}
       <Route
         path="/home"
@@ -35,6 +34,15 @@ const App = () => {
         element={
           <ProtectedRoute allowedRoles={["admin"]}>
             <UserManagementPage />
+          </ProtectedRoute>
+        }
+      />
+      {/* Admin Routes (Only Admins) */}
+      <Route
+        path="/messages"
+        element={
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <MessageManagementPage />
           </ProtectedRoute>
         }
       />
