@@ -6,14 +6,18 @@ import UserManagementPage from "./pages/auth/UserManagementPage";
 import MessagesPage from "./pages/auth/MessageManagementPage";
 import UserHomePage from "./pages/auth/UserHomePage";
 import ContactUsPage from "./pages/auth/ContactUsPage";
+import VerifyEmailPage from "./pages/auth/VerifyEmailPage";
 import ProtectedRoute from "./components/PrivateRoute";
 
 const App = () => {
   return (
     <Routes>
       {/* Public Routes */}
+      <Route path="/" element={<LoginPage />} />
       <Route path="/users/login" element={<LoginPage />} />
       <Route path="/users/register" element={<RegisterPage />} />
+
+      <Route path="/verify-email" element={<VerifyEmailPage />} />
 
       {/* User Routes (Authenticated Users Only) */}
       <Route
