@@ -19,9 +19,9 @@ const App = () => {
       <Route
         path="/home"
         element={
-          <PrivateRoute allowedRoles={["user", "admin"]}>
-            <UserHomePage />
-          </PrivateRoute>
+          // <PrivateRoute allowedRoles={["user", "admin"]}>
+          <UserHomePage />
+          // </PrivateRoute>
         }
       />
       <Route
