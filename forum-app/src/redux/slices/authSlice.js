@@ -1,9 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  user: null,
-  role: null,  // Stores the role (e.g., "admin", "user")
-  isAuthenticated: false,
+  isAuthenticated: !!localStorage.getItem("token"), // read token from localStorage
+  user: JSON.parse(localStorage.getItem("user")) || null,
+  token: localStorage.getItem("token") || null,
+  role: JSON.parse(localStorage.getItem("user"))?.role || null,
 };
 
 const authSlice = createSlice({
@@ -12,13 +13,19 @@ const authSlice = createSlice({
   reducers: {
     login: (state, action) => {
       state.user = action.payload.user;
-      state.role = action.payload.role;  // Store the role
-      state.isAuthenticated = true;
+      state.token = action.payload.token;
+      state.role = action.payload.user.role;
+      state.isAuthenticated = true; // update authenticate status to true
+      localStorage.setItem("user", JSON.stringify(action.payload.user));
+      localStorage.setItem("token", action.payload.token);
     },
     logout: (state) => {
       state.user = null;
+      state.token = null;
       state.role = null;
-      state.isAuthenticated = false;
+      state.isAuthenticated = false; // clear the status when logout
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
     },
   },
 });

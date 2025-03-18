@@ -7,22 +7,26 @@ import UserManagementPage from "./pages/auth/UserManagementPage";
 import MessagesPage from "./pages/auth/MessageManagementPage";
 import UserHomePage from "./pages/auth/UserHomePage";
 import ContactUsPage from "./pages/auth/ContactUsPage";
+import VerifyEmailPage from "./pages/auth/VerifyEmailPage";
+
 
 const App = () => {
   return (
     <Routes>
       {/* Public Routes */}
+      <Route path="/" element={<LoginPage />} />
       <Route path="/users/login" element={<LoginPage />} />
       <Route path="/users/register" element={<RegisterPage />} />
       <Route path="/contactus" element={<ContactUsPage />} />{" "}
-      {/* ✅ Ensure it's not inside PrivateRoute */}
+      <Route path="/verify-email" element={<VerifyEmailPage />} />
+
       {/* User Routes (Authenticated Users Only) */}
       <Route
         path="/home"
         element={
-          <PrivateRoute allowedRoles={["user", "admin"]}>
-            <UserHomePage />
-          </PrivateRoute>
+          // <PrivateRoute allowedRoles={["user", "admin"]}>
+          <UserHomePage />
+          // </PrivateRoute>
         }
       />
       {/* Admin Routes (Only Admins) */}
@@ -34,15 +38,6 @@ const App = () => {
           </ProtectedRoute>
         }
       />
-      <Route
-        path="/messages"
-        element={
-          <ProtectedRoute allowedRoles={["admin"]}>
-            <MessagesPage />
-          </ProtectedRoute>
-        }
-      />
-    </Routes>
   );
 };
 
