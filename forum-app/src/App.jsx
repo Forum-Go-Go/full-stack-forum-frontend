@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import PrivateRoute from "./components/PrivateRoute";
+import ProtectedRoute from "./components/PrivateRoute";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import UserManagementPage from "./pages/auth/UserManagementPage";
@@ -7,7 +8,7 @@ import MessagesPage from "./pages/auth/MessageManagementPage";
 import UserHomePage from "./pages/auth/UserHomePage";
 import ContactUsPage from "./pages/auth/ContactUsPage";
 import VerifyEmailPage from "./pages/auth/VerifyEmailPage";
-import ProtectedRoute from "./components/PrivateRoute";
+
 
 const App = () => {
   return (
@@ -16,7 +17,7 @@ const App = () => {
       <Route path="/" element={<LoginPage />} />
       <Route path="/users/login" element={<LoginPage />} />
       <Route path="/users/register" element={<RegisterPage />} />
-
+      <Route path="/contactus" element={<ContactUsPage />} />{" "}
       <Route path="/verify-email" element={<VerifyEmailPage />} />
 
       {/* User Routes (Authenticated Users Only) */}
@@ -28,15 +29,6 @@ const App = () => {
           // </PrivateRoute>
         }
       />
-      <Route
-        path="/contactus"
-        element={
-          <PrivateRoute allowedRoles={["user", "admin"]}>
-            <ContactUsPage />
-          </PrivateRoute>
-        }
-      />
-
       {/* Admin Routes (Only Admins) */}
       <Route
         path="/users"
@@ -46,15 +38,6 @@ const App = () => {
           </ProtectedRoute>
         }
       />
-      <Route
-        path="/messages"
-        element={
-          <ProtectedRoute allowedRoles={["admin"]}>
-            <MessagesPage />
-          </ProtectedRoute>
-        }
-      />
-    </Routes>
   );
 };
 
