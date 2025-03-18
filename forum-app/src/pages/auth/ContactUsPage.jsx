@@ -1,11 +1,6 @@
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { sendMessage } from "../../redux/slices/messageSlice";
 
 const ContactUsPage = () => {
-  const dispatch = useDispatch();
-  const { loading, error, success } = useSelector((state) => state.messages);
-
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -13,22 +8,43 @@ const ContactUsPage = () => {
     message: "",
   });
 
+  const [showModal, setShowModal] = useState(false); // ✅ Track modal visibility
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(sendMessage(formData));
+    try {
+      const response = await fetch("http://127.0.0.1:5009/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setShowModal(true); // ✅ Show the modal popup
+      } else {
+        alert(`Error: ${data.error}`);
+      }
+    } catch (error) {
+      console.error("Error submitting message:", error);
+    }
+  };
+
+  // ✅ Close modal and clear form
+  const closeModal = () => {
+    setShowModal(false);
+    setFormData({ name: "", email: "", subject: "", message: "" }); // ✅ Clear form
   };
 
   return (
     <div className="p-6 max-w-lg mx-auto">
       <h2 className="font-playfair text-3xl text-blue-500">Contact Us</h2>
-
-      {success && <p className="text-green-500">Message sent successfully!</p>}
-      {error && <p className="text-red-500">Error: {error}</p>}
-
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
@@ -68,11 +84,30 @@ const ContactUsPage = () => {
         <button
           type="submit"
           className="bg-blue-500 text-white p-2 rounded w-full"
-          disabled={loading}
         >
-          {loading ? "Sending..." : "Send Message"}
+          Send Message
         </button>
       </form>
+
+      {/* ✅ Modal Popup */}
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-lg max-w-sm">
+            <h3 className="text-xl font-semibold text-green-600">
+              Message Sent Successfully!
+            </h3>
+            <p className="mt-2 text-gray-700">
+              Thank you for reaching out. We will get back to you soon!
+            </p>
+            <button
+              onClick={closeModal}
+              className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
