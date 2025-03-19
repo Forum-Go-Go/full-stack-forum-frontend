@@ -59,9 +59,10 @@ const GlobalNavBar = () => {
   // Define navigation items based on user role
   const normalUserNav = [
     { path: "/home", label: "Home" },
-    { path: "/profile", label: "Profile" },
-    { path: "/create-post", label: "Create New Post" },
-    { path: "/contactus", label: "Contact Us" },
+    { path: "/create-post", label: "Create New Post"},
+    { path: "/history", label: "View History"},
+    { path: "/profile", label: "User Profile" },
+    { path: "/contactus", label: "Contact Us"}
   ];
 
   const adminNav = [
