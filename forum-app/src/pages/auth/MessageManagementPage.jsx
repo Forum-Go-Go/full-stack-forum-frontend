@@ -66,7 +66,7 @@ const MessageManagementPage = () => {
   };
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
+    <div className="p-6 max-w-3xl mx-auto mt-16">
       <h2 className="text-3xl font-bold mb-4 text-blue-600">
         Message Management
       </h2>
