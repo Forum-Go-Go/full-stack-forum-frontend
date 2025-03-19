@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 
-const ProtectedRoute = ({ children, allowedRoles }) => {
+const PrivateRoute = ({ children, allowedRoles }) => {
   const { isAuthenticated, role } = useSelector((state) => state.auth);
 
   // console.log("Checking ProtectedRoute:");
@@ -22,4 +22,4 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   return children;
 };
 
-export default ProtectedRoute;
+export default PrivateRoute;
