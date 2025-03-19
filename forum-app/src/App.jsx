@@ -4,7 +4,6 @@ import ProtectedRoute from "./components/PrivateRoute";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import UserManagementPage from "./pages/auth/UserManagementPage";
-import MessagesPage from "./pages/auth/MessageManagementPage";
 import UserHomePage from "./pages/auth/UserHomePage";
 import ContactUsPage from "./pages/auth/ContactUsPage";
 import VerifyEmailPage from "./pages/auth/VerifyEmailPage";
@@ -32,7 +31,7 @@ const App = () => {
       <Route
         path="/users"
         element={
-          <ProtectedRoute allowedRoles={["admin"]}>
+          <ProtectedRoute allowedRoles={["admin", "super_admin"]}>
             <UserManagementPage />
           </ProtectedRoute>
         }
