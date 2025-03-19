@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPosts } from "../../redux/slices/postSlice.js";
-import { fetchUser } from "../../redux/slices/userSlice.js";
+// import { fetchUser } from "../../redux/slices/userSlice.js";
 
 const UserHomePage = () => {
   const dispatch = useDispatch();

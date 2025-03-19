@@ -42,6 +42,7 @@ const LoginPage = () => {
       const { token, user } = data;
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
+      console.log(token, user);
 
       dispatch(login({ user, token, role: user.role }));
 
