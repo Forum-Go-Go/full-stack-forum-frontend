@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 const MessageManagementPage = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1); // Track pagination
   const [hasMore, setHasMore] = useState(true); // Track if more messages exist
 
   // ✅ Fetch messages from API Gateway
