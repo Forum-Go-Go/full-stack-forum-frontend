@@ -1,28 +1,36 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPosts } from "../../redux/slices/postSlice.js";
+import { fetchUser } from "../../redux/slices/userSlice.js";
 
 const UserHomePage = () => {
   const dispatch = useDispatch();
   const { posts, loading, error } = useSelector((state) => state.posts);
   const [sortByDate, setSortByDate] = useState(true);
   const [titleFilter, setTitleFilter] = useState("");
+  const [sortedPosts, setSortedPosts] = useState([]);
 
   useEffect(() => {
     dispatch(fetchPosts());
   }, [dispatch]);
 
-  const sortedPosts = [...posts].sort((a, b) =>
-    sortByDate
-      ? new Date(b.dateCreated) - new Date(a.dateCreated)
-      : new Date(a.dateCreated) - new Date(b.dateCreated)
-  );
+  useEffect(() => {
+    // Sort posts whenever posts or sortByDate changes
+    if (posts.length > 0) {
+      const sorted = [...posts].sort((a, b) =>
+        sortByDate
+          ? new Date(b.post.dateCreated) - new Date(a.post.dateCreated)
+          : new Date(a.post.dateCreated) - new Date(b.post.dateCreated)
+      );
+      setSortedPosts(sorted);
+    }
+  }, [posts, sortByDate]); // Re-run sorting when `posts` or `sortByDate` changes
 
   const filteredPosts = sortedPosts.filter((post) =>
     post.post.title.toLowerCase().includes(titleFilter.toLowerCase())
   );
 
-  console.log(posts);
+  console.log(filteredPosts);
 
   return (
     <div className="flex flex-col items-center p-6">
@@ -37,13 +45,16 @@ const UserHomePage = () => {
       <div className="flex gap-4 mb-4">
         <button
           className="px-4 py-2 bg-blue-500 text-white rounded"
-          onClick={() => setSortByDate(!sortByDate)}
+          onClick={() => setSortByDate((prev) => !prev)}
         >
           Sort by Date {sortByDate ? "⬆️" : "⬇️"}
         </button>
         <button
           className="px-4 py-2 bg-gray-500 text-white rounded"
-          onClick={() => setTitleFilter("")}
+          onClick={() => {
+            setTitleFilter("");
+            setSortByDate(true);
+          }}
         >
           Reset Filters
         </button>
@@ -52,14 +63,29 @@ const UserHomePage = () => {
       {/* Loading & Error Handling */}
       {loading && <p>Loading posts...</p>}
       {error && <p className="text-red-500">{error}</p>}
+
+      {/* Display Filtered & Sorted Posts */}
       <div className="flex flex-col w-full max-w-3xl">
-        {filteredPosts.map((post) => (
-          <div key={post.post.id} className="flex flex-col p-4 border mb-2">
-            <h2 className="text-lg font-semibold">{post.post.title}</h2>
-            <p className="text-gray-600">{post.post.dateCreated}</p>
-            <p className="text-gray-800">{post.post.userId}</p>
-          </div>
-        ))}
+        {filteredPosts.length === 0 ? (
+          <p className="text-gray-600 text-center">No published posts found.</p>
+        ) : (
+          filteredPosts.map((post) => (
+            <div
+              key={post.post.id}
+              className="flex flex-col p-4 border mb-2 rounded shadow-md bg-white"
+            >
+              <h2 className="text-lg font-semibold text-blue-700">
+                {post.post.title}
+              </h2>
+              <p className="text-gray-500 text-sm">
+                {new Date(post.post.dateCreated).toLocaleString()}
+              </p>
+              <p className="text-gray-800 font-medium">
+                <strong>User ID:</strong> {post.post.userId}
+              </p>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
