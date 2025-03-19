@@ -57,7 +57,9 @@ const UserHomePage = () => {
           <div key={post.post.id} className="flex flex-col p-4 border mb-2">
             <h2 className="text-lg font-semibold">{post.post.title}</h2>
             <p className="text-gray-600">{post.post.dateCreated}</p>
-            <p className="text-gray-800">{post.post.userId}</p>
+            <p className="text-gray-800">{post.post.images}</p>
+            <p className="text-gray-800">{post.post.content}</p>
+            <p className="text-gray-800">{post.post.attachments}</p>
           </div>
         ))}
       </div>

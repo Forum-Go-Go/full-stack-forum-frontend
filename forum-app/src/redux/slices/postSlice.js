@@ -1,14 +1,33 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const API_URL = "http://127.0.0.1:5002/posts";
+const POST_API_URL = "http://127.0.0.1:5002/posts";
 
-// Async thunk to fetch posts
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
-  const response = await axios.get(API_URL);
-  console.log(response.data)
-  // console.log(response.data.filter((post) => post.post.status === "PostStatus.PUBLISHED"))
-  return response.data.filter((post) => post.post.status === "PostStatus.PUBLISHED");
+  const response = await axios.get(POST_API_URL);
+  const user = JSON.parse(localStorage.getItem("user"))
+
+  let publishedPosts = response.data.filter(
+    (post) => post.post.status === "PostStatus.PUBLISHED"
+  );
+
+  let unpublishedPosts = response.data.filter(
+    (post) => post.post.status === "PostStatus.UNPUBLISHED" && post.post.userId === user.id
+  );
+  
+  console.log("unpublished", unpublishedPosts, response.data)
+  console.log("published", publishedPosts, response.data)
+  // const postsWithUserData = await Promise.all(
+  //   publishedPosts.map(async (post) => {
+  //     const userResponse = await axios.get(
+  //       `http://127.0.0.1:5001/users/${post.post.userId}/profile`
+  //     );
+  //     return { ...post, user: userResponse.data };
+  //   })
+  // );
+
+  // return postsWithUserData;
+  return publishedPosts
 });
 
 const postsSlice = createSlice({

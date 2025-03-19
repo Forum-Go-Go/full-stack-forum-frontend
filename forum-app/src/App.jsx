@@ -9,6 +9,9 @@ import UserHomePage from "./pages/auth/UserHomePage";
 import ContactUsPage from "./pages/auth/ContactUsPage";
 import VerifyEmailPage from "./pages/auth/VerifyEmailPage";
 import MessageManagementPage from "./pages/auth/MessageManagementPage";
+import CreatePostForm from "./pages/auth/CreatePost";
+import UserPostPage from "./pages/auth/UserPostsPage";
+import EditPostForm from "./pages/auth/EditPostForm";
 
 const App = () => {
   return (
@@ -26,6 +29,22 @@ const App = () => {
           // <PrivateRoute allowedRoles={["user", "admin"]}>
           <UserHomePage />
           // </PrivateRoute>
+        }
+      />
+      <Route 
+        path="/user-posts"
+        element={
+          <UserPostPage />
+        }
+      />
+      <Route 
+        path="/edit-post/:postId"
+        element={<EditPostForm />}
+      />
+      <Route
+        path="/create-post"
+        element={
+          <CreatePostForm />
         }
       />
       {/* Admin Routes (Only Admins) */}
