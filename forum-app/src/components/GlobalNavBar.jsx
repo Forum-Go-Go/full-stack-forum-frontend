@@ -36,7 +36,6 @@ const GlobalNavBar = () => {
         email: decodedToken.email,
         role: decodedToken.role || "user",
       });
-
     } catch (error) {
       console.error("Failed to decode JWT:", error);
       localStorage.removeItem("token");
@@ -61,20 +60,20 @@ const GlobalNavBar = () => {
   const normalUserNav = [
     { path: "/home", label: "Home" },
     { path: "/profile", label: "Profile" },
-    { path: "/create-post", label: "Create New Post"},
-    { path: "/contactus", label: "Contact Us"}
+    { path: "/create-post", label: "Create New Post" },
+    { path: "/contactus", label: "Contact Us" },
   ];
 
   const adminNav = [
     { path: "/admin", label: "Admin Dashboard" },
-    { path: "/post-manageent", label: "Post Management"},
+    { path: "/post-manageent", label: "Post Management" },
     { path: "/user-management", label: "User Management" },
     { path: "/messages", label: "Messages Management" },
   ];
 
   const superAdminNav = [
     { path: "/promote-user", label: "Promote User" },
-    { path: "/post-manageent", label: "Post Management"},
+    { path: "/post-manageent", label: "Post Management" },
     { path: "/user-management", label: "User Management" },
   ];
 
@@ -87,10 +86,15 @@ const GlobalNavBar = () => {
   }
 
   return (
-    <nav className="bg-indigo-600 p-4 text-white shadow-md">
+    <nav className="fixed top-0 left-0 w-full z-50 bg-indigo-600 p-4 text-white shadow-lg">
       <div className="container mx-auto flex justify-between items-center">
         {/* Left Side: App Name */}
-        <h1 className="text-3xl font-semibold">Forum</h1>
+        <Link
+          to="/home"
+          className="text-3xl font-semibold hover:text-indigo-300 transition duration-200"
+        >
+          Forum
+        </Link>
 
         {/* Center: Navigation Links */}
         <ul className="flex space-x-6">
@@ -109,7 +113,9 @@ const GlobalNavBar = () => {
         {/* Right Side: User Info & Logout */}
         <div className="flex items-center space-x-5">
           {/* Display user email & role */}
-          <span className="text-sm font-medium">{userData.email} ({userData.role})</span>
+          <span className="text-sm font-medium">
+            {userData.email} ({userData.role})
+          </span>
           <button
             onClick={handleLogout}
             className="bg-red-500 text-white px-5 py-2 rounded-lg hover:bg-red-600 transition duration-300"
