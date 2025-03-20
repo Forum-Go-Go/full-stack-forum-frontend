@@ -11,7 +11,7 @@ import MessageManagementPage from "./pages/auth/MessageManagementPage";
 import CreatePostForm from "./pages/auth/CreatePost";
 import UserPostPage from "./pages/auth/UserPostsPage";
 import EditPostForm from "./pages/auth/EditPostForm";
-import ViewPost from "./pages/auth/ViewPost";
+import PostDetailPage from "./pages/auth/PostDetailPage";
 import UserProfilePage from "./pages/auth/UserProfilePage";
 import GlobalNavBar from "./components/GlobalNavBar";
 import HistoryPage from "./pages/auth/HistoryPage";
@@ -35,7 +35,7 @@ const App = () => {
         <Route path="/verify-email" element={<VerifyEmailPage />} />
 
         <Route path="/user-posts" element={<UserPostPage />}/>
-        <Route path="/view-post/:postId" element={<ViewPost />}/>
+        <Route path="/post/:postId" element={<PostDetailPage />}/>
         <Route path="/edit-post/:postId" element={<EditPostForm />}/>
         <Route path="/create-post" element={<CreatePostForm />}/>
 

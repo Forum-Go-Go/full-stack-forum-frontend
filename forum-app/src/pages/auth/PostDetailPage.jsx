@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 
-const ViewPost = () => {
+const PostDetailPage = () => {
   const { postId } = useParams();
   const navigate = useNavigate();
   const [post, setPost] = useState(null);
@@ -161,4 +161,4 @@ const ViewPost = () => {
   );
 };
 
-export default ViewPost;
+export default PostDetailPage;

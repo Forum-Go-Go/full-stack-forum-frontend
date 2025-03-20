@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPosts, deletePost, toggleArchive } from "../../redux/slices/userPostSlice.js";
+import { deletePost, toggleArchive } from "../../redux/slices/userPostSlice.js";
+import { fetchPosts } from "../../redux/slices/postSlice.js";
 import { useNavigate } from "react-router-dom";
 
 const UserPostPage = () => {
@@ -14,11 +15,23 @@ const UserPostPage = () => {
     dispatch(fetchPosts());
   }, [dispatch]);
 
-  const sortedPosts = [...posts].sort((a, b) =>
-    sortByDate
-      ? new Date(b.post.dateCreated) - new Date(a.post.dateCreated)
-      : new Date(a.post.dateCreated) - new Date(b.post.dateCreated)
-  );
+  useEffect(() => {
+    let sorted = [...posts];
+
+    // Sort by date
+    if (sortByDate) {
+      sorted = sorted.sort(
+        (a, b) => new Date(b.post.dateCreated) - new Date(a.post.dateCreated)
+      );
+    } else {
+      sorted = sorted.sort(
+        (a, b) => new Date(a.post.dateCreated) - new Date(b.post.dateCreated)
+      );
+    }
+
+    setSortedPosts(sorted);
+  }, [posts, sortByDate]);
+
 
   const filteredPosts = sortedPosts.filter((post) =>
     post.post.title.toLowerCase().includes(titleFilter.toLowerCase())
@@ -34,16 +47,16 @@ const UserPostPage = () => {
     dispatch(toggleArchive(postId));
   };
 
-  const filterStatus = (status) => {
-    const dict = {
-      'PostStatus.ARCHIVED': "ARCHIVED",
-      'PostStatus.DELETED': "DELETED",
-      'PostStatus.PUBLISHED': "PUBLISHED",
-      'PostStatus.UNPUBLISHED': "UNPUBLISHED",
-      'PostStatus.DRAFT': "DRAFT",
-    }
-    return dict[status]
-  }
+//   const filterStatus = (status) => {
+//     const dict = {
+//       'PostStatus.ARCHIVED': "ARCHIVED",
+//       'PostStatus.DELETED': "DELETED",
+//       'PostStatus.PUBLISHED': "PUBLISHED",
+//       'PostStatus.UNPUBLISHED': "UNPUBLISHED",
+//       'PostStatus.DRAFT': "DRAFT",
+//     }
+//     return dict[status]
+//   }
 
   return (
     <div className="flex flex-col items-center p-6">
@@ -87,7 +100,7 @@ const UserPostPage = () => {
           <div
             key={postObj.post.id}
             className="flex flex-col p-4 border mb-4 rounded shadow hover:bg-gray-100 cursor-pointer transition"
-            onClick={() => navigate(`/view-post/${postObj.post.id}`)}
+            onClick={() => navigate(`/post/${postObj.post.id}`)}
           >
             <h2 className="text-lg font-semibold">Title: {postObj.post.title}</h2>
             <p className="text-gray-600">Date Created: {postObj.post.dateCreated}</p>
