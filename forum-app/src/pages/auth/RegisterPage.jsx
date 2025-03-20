@@ -138,6 +138,10 @@ const RegisterPage = () => {
           Log in here
         </Link>
       </p>
+      <p className="text-center text-gray-600 mt-2">
+        Need assistance?{" "}
+        <Link to="/contactus" className="text-red-500 hover:underline">Contact Us</Link>
+      </p>
     </div>
   </div>
 );
