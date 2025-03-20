@@ -5,13 +5,13 @@ const API_URL = "http://127.0.0.1:5009/posts";
 
 // Async thunk to fetch posts
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async (_, { getState }) => {
-  const token = getState().auth.token; // Assuming the token is stored in the Redux auth slice
+  const token = getState().auth.token;
   const response = await axios.get(API_URL, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
-  return response.data.filter((post) => post.post.status === "PostStatus.PUBLISHED");
+  return response.data.filter((post) => post.post.status === "Published");
 });
 
 

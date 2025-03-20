@@ -65,35 +65,35 @@ const UserHomePage = () => {
   const uniqueCreators = [...new Set(posts.map((post) => post.post.userId))];
 
   // handle post click event, store in the view history
-  const handlePostClick = async(postId) => {
+  const handlePostClick = async (postId) => {
     const token = localStorage.getItem("token");
     if (!token) {
       console.error("No token found.");
       return;
-  }
-  
-  try {
-    const decodedToken = jwtDecode(token);
-    const userId = decodedToken.user_id;
-
-    if (!userId) {
-      throw new Error("Invalid JWT: user_id is missing.");
     }
 
-    await axios.post(
-      "http://127.0.0.1:5009/history/",
-      { postId },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
+    try {
+      const decodedToken = jwtDecode(token);
+      const userId = decodedToken.user_id;
 
-    console.log(`✅ History saved for post ${postId}`);
-    navigate(`/post/${postId}`);
-  } catch (error) {
-    console.error("Failed to save history:", error);
-  }
-};
+      if (!userId) {
+        throw new Error("Invalid JWT: user_id is missing.");
+      }
+
+      await axios.post(
+        "http://127.0.0.1:5009/history/",
+        { postId },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      console.log(`✅ History saved for post ${postId}`);
+      navigate(`/post/${postId}`);
+    } catch (error) {
+      console.error("Failed to save history:", error);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center p-6 mt-16">
@@ -108,7 +108,7 @@ const UserHomePage = () => {
           {sortByDate ? (
             <i className="fa-regular fa-circle-up"></i>
           ) : (
-            <i class="fa-regular fa-circle-down"></i>
+            <i className="fa-regular fa-circle-down"></i>
           )}
         </button>
         <button
