@@ -45,7 +45,7 @@ const PostDetailPage = () => {
           `http://127.0.0.1:5003/replies/post/${postId}`
         );
         let newReplies = response.data;
-        console.log(response.data)
+        console.log(response.data);
 
         if (!Array.isArray(newReplies)) {
           newReplies = []; // Default to an empty array if it's not an array
@@ -63,6 +63,8 @@ const PostDetailPage = () => {
                   },
                 }
               );
+              console.log("Reply response:", userResponse.data.reply);
+
               const userName = `${userResponse.data.user.firstName} ${userResponse.data.user.lastName}`;
               return {
                 ...reply,
@@ -125,13 +127,39 @@ const PostDetailPage = () => {
     }
   };
 
+  const handleDeleteReply = async (replyId) => {
+    if (!window.confirm("Are you sure you want to delete this reply?")) return;
+
+    try {
+      await axios.put(
+        `http://127.0.0.1:5009/replies/delete/${replyId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      setReplies((prevReplies) =>
+        prevReplies.filter((reply) => reply.reply.replyId !== replyId)
+      );
+    } catch (err) {
+      console.error("Error deleting reply:", err);
+      setError("Error deleting reply. Please try again later.");
+    }
+  };
+
   if (loading) return <div className="text-center mt-10">Loading post...</div>;
   if (error)
     return <div className="text-center mt-10 text-red-500">{error}</div>;
   if (!post) return <div className="text-center mt-10">Post not found.</div>;
 
-  // Check if post is unpublished
+  //Check Post statuses
   const isPostUnpublished = post.status === "Unpublished";
+  const isPostDeleted = post.status === "Deleted";
+  const isPostHidden = post.status === "Hidden";
+  const isPostBanned = post.status === "Banned";
 
   return (
     <div className="flex flex-col items-center mt-16 p-6">
@@ -174,6 +202,17 @@ const PostDetailPage = () => {
                   <p className="text-gray-500 text-sm">
                     Posted on: {reply.reply.dateCreated}
                   </p>
+
+                  {/* Show delete button if the logged-in user is the reply author */}
+                  {JSON.parse(localStorage.getItem("user")).id ===
+                    reply.reply.userId && (
+                    <button
+                      onClick={() => handleDeleteReply(reply.reply.replyId)}
+                      className="text-red-500 hover:text-red-700 text-sm mt-2"
+                    >
+                      Delete
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
@@ -183,38 +222,42 @@ const PostDetailPage = () => {
         </div>
 
         {/* Reply form */}
-        <div className="mt-6">
-          <h3 className="text-xl font-semibold mb-3">Add a Reply</h3>
-          {isPostUnpublished ? (
-            <p className="text-red-500">
-              Replies are disabled for unpublished posts.
-            </p>
-          ) : (
-            <form
-              onSubmit={handleReplySubmit}
-              className="flex flex-col space-y-4"
-            >
-              <textarea
-                value={newReply}
-                onChange={handleReplyChange}
-                placeholder="Write your reply..."
-                className="border rounded-md p-2 w-full"
-                rows="4"
-              />
-              <button
-                type="submit"
-                disabled={replyLoading || isPostUnpublished}
-                className={`px-6 py-2 bg-blue-500 text-white rounded-md ${
-                  replyLoading || isPostUnpublished
-                    ? "bg-gray-400"
-                    : "hover:bg-blue-600"
-                }`}
+        {isPostDeleted ? (
+          <p className="text-red-500">This post has been deleted.</p>
+        ) : (
+          <div className="mt-6">
+            <h3 className="text-xl font-semibold mb-3">Add a Reply</h3>
+            {isPostUnpublished ? (
+              <p className="text-red-500">
+                Replies are disabled for unpublished posts.
+              </p>
+            ) : (
+              <form
+                onSubmit={handleReplySubmit}
+                className="flex flex-col space-y-4"
               >
-                {replyLoading ? "Posting Reply..." : "Post Reply"}
-              </button>
-            </form>
-          )}
-        </div>
+                <textarea
+                  value={newReply}
+                  onChange={handleReplyChange}
+                  placeholder="Write your reply..."
+                  className="border rounded-md p-2 w-full"
+                  rows="4"
+                />
+                <button
+                  type="submit"
+                  disabled={replyLoading || isPostUnpublished}
+                  className={`px-6 py-2 bg-blue-500 text-white rounded-md ${
+                    replyLoading || isPostUnpublished
+                      ? "bg-gray-400"
+                      : "hover:bg-blue-600"
+                  }`}
+                >
+                  {replyLoading ? "Posting Reply..." : "Post Reply"}
+                </button>
+              </form>
+            )}
+          </div>
+        )}
 
         <div className="flex gap-4 mt-6">
           <button
