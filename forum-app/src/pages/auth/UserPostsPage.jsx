@@ -38,13 +38,13 @@ const UserPostPage = () => {
 
   const handleDelete = (postId) => {
     if (confirm("Are you sure you want to delete this post?")) {
-      dispatch(deletePost(postId));
+      dispatch(deletePost(postId)).then(() => dispatch(fetchPosts()));
     }
   };
 
   const handleArchive = (postId) => {
-    dispatch(toggleArchive(postId));
-    // dispatch(fetchPosts());
+    dispatch(toggleArchive(postId)).then(() => dispatch(fetchPosts()));
+    
   };
 
   return (
