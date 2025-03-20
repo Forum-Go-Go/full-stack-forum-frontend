@@ -9,6 +9,7 @@ const UserPostPage = () => {
   const navigate = useNavigate();
   const { posts, loading, error } = useSelector((state) => state.posts);
   const [sortByDate, setSortByDate] = useState(true);
+  const [sortedPosts, setSortedPosts] = useState([]);
   const [titleFilter, setTitleFilter] = useState("");
 
   useEffect(() => {
