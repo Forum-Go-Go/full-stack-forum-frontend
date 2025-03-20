@@ -60,6 +60,7 @@ const GlobalNavBar = () => {
   const normalUserNav = [
     { path: "/home", label: "Home" },
     { path: "/create-post", label: "Create New Post"},
+    { path: "/user-posts", label: "My Posts" },
     { path: "/history", label: "History Management"},
     { path: "/profile", label: "User Profile" },
     { path: "/contactus", label: "Contact Us"}
@@ -67,12 +68,14 @@ const GlobalNavBar = () => {
 
   const adminNav = [
     { path: "/home", label: "Home" },
+    { path: "/user-posts", label: "My Posts" },
     { path: "/user-management", label: "User Management" },
     { path: "/messages", label: "Messages Management" },
   ];
 
   const superAdminNav = [
     { path: "/home", label: "Home" },
+    { path: "/user-posts", label: "My Posts" },
     { path: "/messages", label: "Messages Management" },
     { path: "/user-management", label: "User Management" },
   ];
