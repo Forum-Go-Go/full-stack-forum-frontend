@@ -55,7 +55,6 @@ const UserProfilePage = () => {
     const file = event.target.files[0];
     if (file) {
       setSelectedFile(file);
-      // view the image file
       const reader = new FileReader();
       reader.onload = (e) => {
         setUserProfile((prev) => ({
@@ -95,18 +94,17 @@ const UserProfilePage = () => {
   };
 
   if (loading) {
-    return <div className="text-center mt-10 text-gray-600">Loading profile...</div>;
+    return <div className="text-center mt-20 text-gray-600">Loading profile...</div>;
   }
 
   if (error) {
-    return <div className="text-center mt-10 text-red-500">{error}</div>;
+    return <div className="text-center mt-20 text-red-500">{error}</div>;
   }
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
+    <div className="max-w-3xl mx-auto mt-24 p-6 bg-white shadow-lg rounded-lg">
       <h2 className="text-3xl font-semibold text-gray-700 text-center">User Profile</h2>
 
-      {/* profile and basic information */}
       <div className="flex flex-col items-center mt-6">
         <img
           src={userProfile.profileImageURL}
@@ -122,7 +120,6 @@ const UserProfilePage = () => {
           {userProfile.type.toUpperCase()}
         </span>
 
-        {/* upload Button */}
         <div className="mt-4">
           <input
             type="file"
@@ -150,7 +147,6 @@ const UserProfilePage = () => {
         </div>
       </div>
 
-      {/* user information */}
       <div className="mt-6">
         <h3 className="text-xl font-semibold text-gray-700">Activity</h3>
         <div className="mt-4 space-y-2">
