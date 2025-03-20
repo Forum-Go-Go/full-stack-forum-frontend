@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useParams, useNavigate } from "react-router-dom";
 import { fetchUser } from "../../redux/slices/userSlice.js";
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from "react-redux";
 
 const PostDetailPage = () => {
   const { postId } = useParams();
@@ -12,25 +12,27 @@ const PostDetailPage = () => {
   const user = useSelector((state) => state.user?.users[post?.userId] || {});
   const [replies, setReplies] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [newReply, setNewReply] = useState(''); // To handle new reply input
+  const [error, setError] = useState("");
+  const [newReply, setNewReply] = useState(""); // To handle new reply input
   const [replyLoading, setReplyLoading] = useState(false);
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:5002/posts/${postId}`);
-        const new_post = response.data.post
+        const response = await axios.get(
+          `http://127.0.0.1:5002/posts/${postId}`
+        );
+        const new_post = response.data.post;
         setPost(response.data.post);
-  
+
         if (new_post && new_post?.userId) {
           dispatch(fetchUser(new_post?.userId))
             .unwrap()
             .catch((err) => console.error("Failed to fetch user:", err));
         }
       } catch (err) {
-        console.error('Error fetching post:', err);
-        setError('Error fetching post. Please try again later.');
+        console.error("Error fetching post:", err);
+        setError("Error fetching post. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -39,38 +41,50 @@ const PostDetailPage = () => {
     const fetchReplies = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`http://127.0.0.1:5003/replies/post/${postId}`);
+        const response = await axios.get(
+          `http://127.0.0.1:5003/replies/post/${postId}`
+        );
         let newReplies = response.data;
-    
+
+        if (!Array.isArray(newReplies)) {
+          newReplies = []; // Default to an empty array if it's not an array
+        }
+
         // Fetch user data for each reply and attach to reply object
         const enrichedReplies = await Promise.all(
           newReplies.map(async (reply) => {
             try {
-              const userResponse = await axios.get(`http://127.0.0.1:5009/users/${reply.reply.userId}/profile`, {
-                headers: {
-                  Authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-              });
-              const userName = `${userResponse.data.user.firstName} ${userResponse.data.user.lastName}`
+              const userResponse = await axios.get(
+                `http://127.0.0.1:5009/users/${reply.reply.userId}/profile`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                  },
+                }
+              );
+              const userName = `${userResponse.data.user.firstName} ${userResponse.data.user.lastName}`;
               return {
                 ...reply,
-                userName // or whatever field contains the name
+                userName, // or whatever field contains the name
               };
             } catch (userErr) {
-              console.error(`Failed to fetch user for reply ${reply.id}:`, userErr);
+              console.error(
+                `Failed to fetch user for reply ${reply.id}:`,
+                userErr
+              );
               return { ...reply, userName: "Unknown User" };
             }
           })
         );
-    
+
         setReplies(enrichedReplies);
       } catch (err) {
-        console.error('Error fetching replies:', err);
-        setError('Error fetching replies. Please try again later.');
+        console.error("Error fetching replies:", err);
+        setError("Error fetching replies. Please try again later.");
       } finally {
         setLoading(false);
       }
-    };    
+    };
 
     fetchPost();
     fetchReplies();
@@ -93,7 +107,7 @@ const PostDetailPage = () => {
         },
         {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
       );
@@ -101,32 +115,39 @@ const PostDetailPage = () => {
         const currentReplies = Array.isArray(prevReplies) ? prevReplies : [];
         return [response.data.reply, ...currentReplies]; // Add the new reply to the front
       });
-      setNewReply(''); // Reset reply input after successful submission
+      setNewReply(""); // Reset reply input after successful submission
     } catch (err) {
-      console.error('Error posting reply:', err);
-      setError('Error posting reply. Please try again later.');
+      console.error("Error posting reply:", err);
+      setError("Error posting reply. Please try again later.");
     } finally {
       setReplyLoading(false);
     }
   };
 
   if (loading) return <div className="text-center mt-10">Loading post...</div>;
-  if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
+  if (error)
+    return <div className="text-center mt-10 text-red-500">{error}</div>;
   if (!post) return <div className="text-center mt-10">Post not found.</div>;
 
   // Check if post is unpublished
-  const isPostUnpublished = post.status === 'Unpublished';
+  const isPostUnpublished = post.status === "Unpublished";
 
   return (
     <div className="flex flex-col items-center mt-16 p-6">
       <div className="w-full max-w-3xl bg-white shadow-lg rounded-xl p-6">
         <h2 className="text-3xl font-bold mb-2">Title: {post.title}</h2>
-        <p className="text-gray-500 text-sm mb-4">Author: {user.firstName + " " + user.lastName}</p>
-        <p className="text-gray-500 text-sm mb-4">Created on: {post.dateCreated}</p>
+        <p className="text-gray-500 text-sm mb-4">
+          Author: {user.firstName + " " + user.lastName}
+        </p>
+        <p className="text-gray-500 text-sm mb-4">
+          Created on: {post.dateCreated}
+        </p>
         <p className="text-gray-600 mb-2">
           <span className="font-semibold">Status:</span> {post.status}
         </p>
-        <div className="prose max-w-none text-gray-800 mb-6">Content: {post.content}</div>
+        <div className="prose max-w-none text-gray-800 mb-6">
+          Content: {post.content}
+        </div>
         {post.images && (
           <div className="mb-6">
             <h3 className="text-xl font-semibold mb-3">Image</h3>
@@ -149,7 +170,9 @@ const PostDetailPage = () => {
                 <div key={reply.reply.replyId} className="border-b pb-4 mb-4">
                   <p className="font-semibold">Author: {reply.userName}</p>
                   <p className="font-semibold">Reply: {reply.reply.comment}</p>
-                  <p className="text-gray-500 text-sm">Posted on: {reply.reply.dateCreated}</p>
+                  <p className="text-gray-500 text-sm">
+                    Posted on: {reply.reply.dateCreated}
+                  </p>
                 </div>
               ))}
             </div>
@@ -162,9 +185,14 @@ const PostDetailPage = () => {
         <div className="mt-6">
           <h3 className="text-xl font-semibold mb-3">Add a Reply</h3>
           {isPostUnpublished ? (
-            <p className="text-red-500">Replies are disabled for unpublished posts.</p>
+            <p className="text-red-500">
+              Replies are disabled for unpublished posts.
+            </p>
           ) : (
-            <form onSubmit={handleReplySubmit} className="flex flex-col space-y-4">
+            <form
+              onSubmit={handleReplySubmit}
+              className="flex flex-col space-y-4"
+            >
               <textarea
                 value={newReply}
                 onChange={handleReplyChange}
@@ -176,10 +204,12 @@ const PostDetailPage = () => {
                 type="submit"
                 disabled={replyLoading || isPostUnpublished}
                 className={`px-6 py-2 bg-blue-500 text-white rounded-md ${
-                  replyLoading || isPostUnpublished ? 'bg-gray-400' : 'hover:bg-blue-600'
+                  replyLoading || isPostUnpublished
+                    ? "bg-gray-400"
+                    : "hover:bg-blue-600"
                 }`}
               >
-                {replyLoading ? 'Posting Reply...' : 'Post Reply'}
+                {replyLoading ? "Posting Reply..." : "Post Reply"}
               </button>
             </form>
           )}
@@ -188,7 +218,7 @@ const PostDetailPage = () => {
         <div className="flex gap-4 mt-6">
           <button
             className="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
-            onClick={() => navigate('/')}
+            onClick={() => navigate("/")}
           >
             Back to Posts
           </button>

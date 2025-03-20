@@ -141,7 +141,7 @@ const UserHomePage = () => {
 
   return (
     <div className="flex flex-col items-center p-6 mt-16">
-      <h1 className="text-2xl font-bold mb-4">
+      <h1 className="text-3xl font-bold mb-4 font-lato">
         {isAdmin ? "Admin Dashboard" : "Published Posts"}
       </h1>
 

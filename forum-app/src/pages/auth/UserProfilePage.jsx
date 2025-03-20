@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { jwtDecode } from "jwt-decode";  
+import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -44,13 +44,16 @@ const UserProfilePage = () => {
 
   const fetchUserProfile = async (userId) => {
     try {
-      const response = await axios.get(`http://127.0.0.1:5009/users/${userId}/profile`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        `http://127.0.0.1:5009/users/${userId}/profile`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      console.log("Fetched user data:", response.data.user); 
+      console.log("Fetched user data:", response.data.user);
       setUserProfile(response.data.user);
       setLoading(false);
     } catch (err) {
@@ -75,12 +78,16 @@ const UserProfilePage = () => {
     formData.append("profileImage", selectedFile);
 
     try {
-      await axios.put(`http://127.0.0.1:5009/users/${userId}/profile`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      await axios.put(
+        `http://127.0.0.1:5009/users/${userId}/profile`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       alert("Profile image updated successfully!");
       setUploading(false);
@@ -93,7 +100,9 @@ const UserProfilePage = () => {
   };
 
   if (loading) {
-    return <div className="text-center mt-20 text-gray-600">Loading profile...</div>;
+    return (
+      <div className="text-center mt-20 text-gray-600">Loading profile...</div>
+    );
   }
 
   if (error) {
@@ -102,7 +111,9 @@ const UserProfilePage = () => {
 
   return (
     <div className="max-w-3xl mx-auto mt-16 p-8 bg-white shadow-md rounded-xl">
-      <h2 className="text-3xl font-bold text-gray-800 text-center mb-6">User Profile</h2>
+      <h2 className="text-3xl font-bold text-gray-800 text-center mb-6 font-lato">
+        User Profile
+      </h2>
 
       <div className="flex flex-col items-center">
         {/* Profile Image */}
@@ -118,7 +129,9 @@ const UserProfilePage = () => {
           {userProfile?.firstName} {userProfile?.lastName}
         </h3>
         <p className="text-gray-500">{userProfile?.email}</p>
-        <p className="text-sm text-gray-400">Joined on {userProfile?.dateJoined}</p>
+        <p className="text-sm text-gray-400">
+          Joined on {userProfile?.dateJoined}
+        </p>
 
         {/* Role Badge */}
         <span className="mt-2 px-4 py-1 bg-blue-600 text-white text-sm rounded-lg shadow">
@@ -127,7 +140,13 @@ const UserProfilePage = () => {
 
         {/* Profile Image Upload */}
         <div className="mt-4">
-          <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" id="fileUpload" />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="hidden"
+            id="fileUpload"
+          />
           <label
             htmlFor="fileUpload"
             className="cursor-pointer px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
@@ -153,7 +172,11 @@ const UserProfilePage = () => {
           </span>
         ) : (
           <button
-            onClick={() => navigate("/verify-email", { state: { email: userProfile?.email } })}
+            onClick={() =>
+              navigate("/verify-email", {
+                state: { email: userProfile?.email },
+              })
+            }
             className="mt-4 px-6 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 shadow-md transition"
           >
             Verify Email
@@ -162,22 +185,22 @@ const UserProfilePage = () => {
 
         {/* Navigation Buttons */}
         <div className="mt-6 flex space-x-4">
-          <button 
-            onClick={() => navigate("/top-posts")} 
+          <button
+            onClick={() => navigate("/top-posts")}
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 shadow-md"
           >
             View Top Posts
           </button>
 
-          <button 
-            onClick={() => navigate("/drafts")} 
+          <button
+            onClick={() => navigate("/drafts")}
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 shadow-md"
           >
             View Drafts
           </button>
 
-          <button 
-            onClick={() => navigate("/history")} 
+          <button
+            onClick={() => navigate("/history")}
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 shadow-md"
           >
             View History

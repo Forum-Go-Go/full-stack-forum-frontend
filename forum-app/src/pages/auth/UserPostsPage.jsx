@@ -33,7 +33,6 @@ const UserPostPage = () => {
     setSortedPosts(sorted);
   }, [posts, sortByDate]);
 
-
   const filteredPosts = sortedPosts.filter((post) =>
     post.post.title.toLowerCase().includes(titleFilter.toLowerCase())
   );
@@ -48,20 +47,20 @@ const UserPostPage = () => {
     dispatch(toggleArchive(postId));
   };
 
-//   const filterStatus = (status) => {
-//     const dict = {
-//       'PostStatus.ARCHIVED': "ARCHIVED",
-//       'PostStatus.DELETED': "DELETED",
-//       'PostStatus.PUBLISHED': "PUBLISHED",
-//       'PostStatus.UNPUBLISHED': "UNPUBLISHED",
-//       'PostStatus.DRAFT': "DRAFT",
-//     }
-//     return dict[status]
-//   }
+  //   const filterStatus = (status) => {
+  //     const dict = {
+  //       'PostStatus.ARCHIVED': "ARCHIVED",
+  //       'PostStatus.DELETED': "DELETED",
+  //       'PostStatus.PUBLISHED': "PUBLISHED",
+  //       'PostStatus.UNPUBLISHED': "UNPUBLISHED",
+  //       'PostStatus.DRAFT': "DRAFT",
+  //     }
+  //     return dict[status]
+  //   }
 
   return (
     <div className="flex flex-col items-center mt-16 p-6">
-      <h1 className="text-2xl font-bold mb-4">Your Posts</h1>
+      <h1 className="text-3xl font-bold mb-4 font-lato">Your Posts</h1>
 
       <button
         className="px-4 py-2 mb-4 bg-green-500 text-white rounded"
@@ -83,7 +82,7 @@ const UserPostPage = () => {
           className="px-4 py-2 bg-blue-500 text-white rounded"
           onClick={() => setSortByDate(!sortByDate)}
         >
-          Sort by Date {sortByDate ? "⬆️" : "⬇️"}
+          Sort by Date {sortByDate ? "↓" : "↑"}
         </button>
         <button
           className="px-4 py-2 bg-gray-500 text-white rounded"
@@ -103,42 +102,52 @@ const UserPostPage = () => {
             className="flex flex-col p-4 border mb-4 rounded shadow hover:bg-gray-100 cursor-pointer transition"
             onClick={() => navigate(`/post/${postObj.post.id}`)}
           >
-            <h2 className="text-lg font-semibold">Title: {postObj.post.title}</h2>
-            <p className="text-gray-600">Date Created: {postObj.post.dateCreated}</p>
-            <p className="text-gray-800 line-clamp-3">Content: {postObj.post.content}</p>
+            <h2 className="text-lg font-semibold">
+              Title: {postObj.post.title}
+            </h2>
+            <p className="text-gray-600">
+              Date Created: {postObj.post.dateCreated}
+            </p>
+            <p className="text-gray-800 line-clamp-3">
+              Content: {postObj.post.content}
+            </p>
             {postObj.post.status && <p>Status: {postObj.post.status}</p>}
 
-            {postObj.post.status !== "Deleted" && (<div className="flex gap-2 mt-4">
-              <button
-                className="px-3 py-1 bg-yellow-500 text-white rounded"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate(`/edit-post/${postObj.post.id}`);
-                }}
-              >
-                Edit
-              </button>
+            {postObj.post.status !== "Deleted" && (
+              <div className="flex gap-2 mt-4">
+                <button
+                  className="px-3 py-1 bg-yellow-500 text-white rounded"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/edit-post/${postObj.post.id}`);
+                  }}
+                >
+                  Edit
+                </button>
 
-              <button
-                className="px-3 py-1 bg-purple-500 text-white rounded"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleArchive(postObj.post.id);
-                }}
-              >
-                {postObj.post.status === 'PostStatus.ARCHIVED' ? "Unarchive" : "Archive"}
-              </button>
+                <button
+                  className="px-3 py-1 bg-purple-500 text-white rounded"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleArchive(postObj.post.id);
+                  }}
+                >
+                  {postObj.post.status === "PostStatus.ARCHIVED"
+                    ? "Unarchive"
+                    : "Archive"}
+                </button>
 
-              <button
-                className="px-3 py-1 bg-red-500 text-white rounded"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDelete(postObj.post.id);
-                }}
-              >
-                Delete
-              </button>
-            </div>)}
+                <button
+                  className="px-3 py-1 bg-red-500 text-white rounded"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(postObj.post.id);
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
+            )}
           </div>
         ))}
       </div>
