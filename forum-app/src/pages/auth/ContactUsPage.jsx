@@ -43,7 +43,7 @@ const ContactUsPage = () => {
   };
 
   return (
-    <div className="p-6 max-w-lg mx-auto">
+    <div className="p-6 max-w-lg mx-auto mt-20">
       <h2 className="font-playfair text-3xl text-blue-500">Contact Us</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input

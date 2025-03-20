@@ -10,6 +10,7 @@ import VerifyEmailPage from "./pages/auth/VerifyEmailPage";
 import MessageManagementPage from "./pages/auth/MessageManagementPage";
 import UserProfilePage from "./pages/auth/UserProfilePage";
 import GlobalNavBar from "./components/GlobalNavBar";
+import HistoryPage from "./pages/auth/HistoryPage";
 
 const App = () => {
   const { isAuthenticated } = useSelector((state) => state.auth);
@@ -31,18 +32,34 @@ const App = () => {
         <Route
           path="/home"
           element={
-            <PrivateRoute allowedRoles={["user", "admin"]}>
+            <PrivateRoute allowedRoles={["user", "admin", "super_admin"]}>
               <UserHomePage />
             </PrivateRoute>
           }
         />
         <Route path="/profile" element={<UserProfilePage />} />
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute allowedRoles={["user", "admin", "super_admin"]}>
+              <UserProfilePage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/history"
+          element={
+            <PrivateRoute allowedRoles={["user"]}>
+              <HistoryPage />
+            </PrivateRoute>
+          }
+        />
 
         {/* Admin Routes (Only Admins) */}
         <Route
-          path="/users"
+          path="/user-management"
           element={
-            <PrivateRoute allowedRoles={["admin"]}>
+            <PrivateRoute allowedRoles={["admin","super_admin"]}>
               <UserManagementPage />
             </PrivateRoute>
           }
@@ -50,7 +67,7 @@ const App = () => {
         <Route
           path="/messages"
           element={
-            <PrivateRoute allowedRoles={["admin"]}>
+            <PrivateRoute allowedRoles={["admin","super_admin"]}>
               <MessageManagementPage />
             </PrivateRoute>
           }
