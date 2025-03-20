@@ -2,9 +2,13 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPosts } from "../../redux/slices/postSlice.js";
 import { fetchUser } from "../../redux/slices/userSlice.js";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 const UserHomePage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { posts, loading, error } = useSelector((state) => state.posts);
   const users = useSelector((state) => state.user?.users || {});
   const userError = useSelector((state) => state.user?.error);
@@ -59,6 +63,37 @@ const UserHomePage = () => {
 
   // Unique Creators for Dropdown
   const uniqueCreators = [...new Set(posts.map((post) => post.post.userId))];
+
+  // handle post click event, store in the view history
+  const handlePostClick = async(postId) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("No token found.");
+      return;
+  }
+  
+  try {
+    const decodedToken = jwtDecode(token);
+    const userId = decodedToken.user_id;
+
+    if (!userId) {
+      throw new Error("Invalid JWT: user_id is missing.");
+    }
+
+    await axios.post(
+      "http://127.0.0.1:5009/history/",
+      { postId },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    console.log(`✅ History saved for post ${postId}`);
+    navigate(`/post/${postId}`);
+  } catch (error) {
+    console.error("Failed to save history:", error);
+  }
+};
 
   return (
     <div className="flex flex-col items-center p-6 mt-16">
@@ -136,7 +171,8 @@ const UserHomePage = () => {
             return (
               <div
                 key={post.post.id}
-                className="flex flex-col p-4 border mb-2 rounded shadow-md bg-white"
+                className="flex flex-col p-4 border mb-2 rounded shadow-md bg-white cursor-pointer hover:bg-gray-100 transition"
+                onClick={() => handlePostClick(post.post.id)}
               >
                 <h2 className="text-lg font-semibold text-blue-700">
                   {post.post.title}
