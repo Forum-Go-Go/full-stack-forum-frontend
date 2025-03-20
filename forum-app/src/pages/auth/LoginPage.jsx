@@ -1,14 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect  } from "react";
 import { useDispatch } from "react-redux";
 import { login } from "../../redux/slices/authSlice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 
 const LoginPage = () => {
+  const location = useLocation();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
   const [showEmailPopup, setEmailPopup] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  // if user visit from register page, it will fill out the email and password automatically
+  useEffect(() => {
+    if (location.state?.email && location.state?.password) {
+      setFormData({
+        email: location.state.email,
+        password: location.state.password,
+      });
+    }
+  }, [location]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -31,6 +42,7 @@ const LoginPage = () => {
       const { token, user } = data;
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
+      console.log(token, user);
 
       dispatch(login({ user, token, role: user.role }));
 
@@ -87,6 +99,10 @@ const LoginPage = () => {
             Login
           </button>
         </form>
+        <p className="text-center text-gray-600 mt-4">
+          Don't have account? {" "}
+          <Link to="/users/register" className="text-blue-500 hover:underline">Sign Up Here</Link>
+        </p>
       </div>
 
       {showEmailPopup && (
