@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 const MessageManagementPage = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1); // Track pagination
   const [hasMore, setHasMore] = useState(true); // Track if more messages exist
 
   // ✅ Fetch messages from API Gateway
@@ -67,7 +66,7 @@ const MessageManagementPage = () => {
   };
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
+    <div className="p-6 max-w-3xl mx-auto mt-16">
       <h2 className="text-3xl font-bold mb-4 text-blue-600">
         Message Management
       </h2>

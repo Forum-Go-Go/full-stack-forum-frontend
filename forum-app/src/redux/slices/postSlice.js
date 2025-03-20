@@ -1,15 +1,19 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const API_URL = "http://127.0.0.1:5002/posts";
+const API_URL = "http://127.0.0.1:5009/posts";
 
 // Async thunk to fetch posts
-export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
-  const response = await axios.get(API_URL);
-  console.log(response.data)
-  // console.log(response.data.filter((post) => post.post.status === "PostStatus.PUBLISHED"))
-  return response.data.filter((post) => post.post.status === "PostStatus.PUBLISHED");
+export const fetchPosts = createAsyncThunk("posts/fetchPosts", async (_, { getState }) => {
+  const token = getState().auth.token;
+  const response = await axios.get(API_URL, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
 });
+
 
 const postsSlice = createSlice({
   name: "posts",
