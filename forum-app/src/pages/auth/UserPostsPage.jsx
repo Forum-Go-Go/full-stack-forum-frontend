@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deletePost, toggleArchive } from "../../redux/slices/userPostSlice.js";
-import { fetchPosts } from "../../redux/slices/postSlice.js";
+import { fetchPosts, deletePost, toggleArchive } from "../../redux/slices/userPostSlice.js";
 import { useNavigate } from "react-router-dom";
 
 const UserPostPage = () => {
@@ -45,18 +44,8 @@ const UserPostPage = () => {
 
   const handleArchive = (postId) => {
     dispatch(toggleArchive(postId));
+    // dispatch(fetchPosts());
   };
-
-  //   const filterStatus = (status) => {
-  //     const dict = {
-  //       'PostStatus.ARCHIVED': "ARCHIVED",
-  //       'PostStatus.DELETED': "DELETED",
-  //       'PostStatus.PUBLISHED': "PUBLISHED",
-  //       'PostStatus.UNPUBLISHED': "UNPUBLISHED",
-  //       'PostStatus.DRAFT': "DRAFT",
-  //     }
-  //     return dict[status]
-  //   }
 
   return (
     <div className="flex flex-col items-center mt-16 p-6">
@@ -132,9 +121,7 @@ const UserPostPage = () => {
                     handleArchive(postObj.post.id);
                   }}
                 >
-                  {postObj.post.status === "PostStatus.ARCHIVED"
-                    ? "Unarchive"
-                    : "Archive"}
+                  {postObj.post.isArchived ? "Unarchive" : "Archive"}
                 </button>
 
                 <button

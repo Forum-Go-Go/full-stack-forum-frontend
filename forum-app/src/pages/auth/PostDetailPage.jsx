@@ -218,7 +218,7 @@ const PostDetailPage = () => {
         <div className="flex gap-4 mt-6">
           <button
             className="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/user-posts")}
           >
             Back to Posts
           </button>

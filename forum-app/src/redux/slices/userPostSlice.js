@@ -1,6 +1,18 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const POST_API_URL = "http://127.0.0.1:5002/posts";
+ 
+export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  const response = await axios.get(POST_API_URL);
+
+  // Return all posts belonging to the user, regardless of status
+  const userPosts = response.data.filter((post) => post.post.userId === user.id);
+
+  return userPosts;
+});
+
 export const deletePost = createAsyncThunk("posts/deletePost", async (postId) => {
   await axios.put(`http://127.0.0.1:5009/posts/${postId}/status`,
     {"status": "Deleted",
@@ -13,14 +25,14 @@ export const deletePost = createAsyncThunk("posts/deletePost", async (postId) =>
 });
 
 export const toggleArchive = createAsyncThunk("posts/toggleArchive", async (postId) => {
-  const response = await axios.put(`http://127.0.0.1:5009/posts/${postId}/toggle-archive`,
+  await axios.put(`http://127.0.0.1:5009/posts/${postId}/toggle-archive`,
     {
       "userId": JSON.parse(localStorage.getItem("user")).id
     },
     {
       headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` },
     });
-  return response.data;
+  return { postId }; // <-- Return only postId
 });
 
 const postsSlice = createSlice({
@@ -49,10 +61,11 @@ const postsSlice = createSlice({
         state.posts = state.posts.filter((post) => post.post.id !== action.payload);
       })
       .addCase(toggleArchive.fulfilled, (state, action) => {
-        state.posts = state.posts.map((post) =>
-          post.post.id === action.payload.post.id ? action.payload : post
-        );
-      })
+        const post = state.posts.find((p) => p.post.id === action.payload.postId);
+        if (post) {
+          post.post.isArchived = !post.post.isArchived;
+        }
+      });
   },
 });
 
