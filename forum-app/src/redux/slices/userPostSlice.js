@@ -14,17 +14,12 @@ export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
 });
 
 export const deletePost = createAsyncThunk("posts/deletePost", async (postId) => {
-  await axios.delete(`${POST_API_URL}/${postId}`);
+  await axios.put(`${POST_API_URL}/${postId}/status`, {"status": "Deleted"});
   return postId;
 });
 
-export const archivePost = createAsyncThunk("posts/archivePost", async (postId) => {
-  const response = await axios.patch(`${POST_API_URL}/${postId}/archive`);
-  return response.data;
-});
-
-export const unarchivePost = createAsyncThunk("posts/unarchivePost", async (postId) => {
-  const response = await axios.patch(`${POST_API_URL}/${postId}/unarchive`);
+export const toggleArchive = createAsyncThunk("posts/toggleArchive", async (postId) => {
+  const response = await axios.put(`${POST_API_URL}/${postId}/toggle-archive`);
   return response.data;
 });
 
@@ -53,16 +48,11 @@ const postsSlice = createSlice({
       .addCase(deletePost.fulfilled, (state, action) => {
         state.posts = state.posts.filter((post) => post.post.id !== action.payload);
       })
-      .addCase(archivePost.fulfilled, (state, action) => {
+      .addCase(toggleArchive.fulfilled, (state, action) => {
         state.posts = state.posts.map((post) =>
           post.post.id === action.payload.post.id ? action.payload : post
         );
       })
-      .addCase(unarchivePost.fulfilled, (state, action) => {
-        state.posts = state.posts.map((post) =>
-          post.post.id === action.payload.post.id ? action.payload : post
-        );
-      });
   },
 });
 

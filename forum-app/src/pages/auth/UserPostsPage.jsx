@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPosts, deletePost, archivePost, unarchivePost } from "../../redux/slices/userPostSlice.js";
+import { fetchPosts, deletePost, toggleArchive } from "../../redux/slices/userPostSlice.js";
 import { useNavigate } from "react-router-dom";
 
 const UserPostPage = () => {
@@ -30,21 +30,17 @@ const UserPostPage = () => {
     }
   };
 
-  const handleArchive = (postId, isArchived) => {
-    if (isArchived) {
-      dispatch(unarchivePost(postId));
-    } else {
-      dispatch(archivePost(postId));
-    }
+  const handleArchive = (postId) => {
+    dispatch(toggleArchive(postId));
   };
 
   const filterStatus = (status) => {
     const dict = {
-        'PostStatus.ARCHIVED': "ARCHIVED",
-        'PostStatus.DELETED': "DELETED",
-        'PostStatus.PUBLISHED': "PUBLISHED",
-        'PostStatus.UNPUBLISHED': "UNPUBLISHED",
-        'PostStatus.DRAFT': "DRAFT",
+      'PostStatus.ARCHIVED': "ARCHIVED",
+      'PostStatus.DELETED': "DELETED",
+      'PostStatus.PUBLISHED': "PUBLISHED",
+      'PostStatus.UNPUBLISHED': "UNPUBLISHED",
+      'PostStatus.DRAFT': "DRAFT",
     }
     return dict[status]
   }
@@ -88,32 +84,43 @@ const UserPostPage = () => {
 
       <div className="flex flex-col w-full max-w-3xl">
         {filteredPosts.map((postObj) => (
-          <div key={postObj.post.id} className="flex flex-col p-4 border mb-4 rounded shadow">
+          <div
+            key={postObj.post.id}
+            className="flex flex-col p-4 border mb-4 rounded shadow hover:bg-gray-100 cursor-pointer transition"
+            onClick={() => navigate(`/view-post/${postObj.post.id}`)}
+          >
             <h2 className="text-lg font-semibold">Title: {postObj.post.title}</h2>
             <p className="text-gray-600">Date Created: {postObj.post.dateCreated}</p>
-            <p className="text-gray-800">Content: {postObj.post.content}</p>
-            {postObj.post.images && <p>Images: {postObj.post.images}</p>}
-            {postObj.post.attachments && <p>Attachments: {postObj.post.attachments}</p>}
-            {postObj.post.status && <p>Status: {filterStatus(postObj.post.status)}</p>}
+            <p className="text-gray-800 line-clamp-3">Content: {postObj.post.content}</p>
+            {postObj.post.status && <p>Status: {postObj.post.status}</p>}
 
             <div className="flex gap-2 mt-4">
               <button
                 className="px-3 py-1 bg-yellow-500 text-white rounded"
-                onClick={() => navigate(`/edit-post/${postObj.post.id}`)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/edit-post/${postObj.post.id}`);
+                }}
               >
                 Edit
               </button>
 
               <button
                 className="px-3 py-1 bg-purple-500 text-white rounded"
-                onClick={() => handleArchive(postObj.post.id, postObj.post.status === 'PostStatus.ARCHIVED')}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleArchive(postObj.post.id);
+                }}
               >
                 {postObj.post.status === 'PostStatus.ARCHIVED' ? "Unarchive" : "Archive"}
               </button>
 
               <button
                 className="px-3 py-1 bg-red-500 text-white rounded"
-                onClick={() => handleDelete(postObj.post.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDelete(postObj.post.id);
+                }}
               >
                 Delete
               </button>

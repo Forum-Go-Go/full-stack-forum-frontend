@@ -12,6 +12,7 @@ import MessageManagementPage from "./pages/auth/MessageManagementPage";
 import CreatePostForm from "./pages/auth/CreatePost";
 import UserPostPage from "./pages/auth/UserPostsPage";
 import EditPostForm from "./pages/auth/EditPostForm";
+import ViewPost from "./pages/auth/ViewPost";
 
 const App = () => {
   return (
@@ -36,6 +37,10 @@ const App = () => {
         element={
           <UserPostPage />
         }
+      />
+      <Route 
+        path="/view-post/:postId"
+        element={<ViewPost />}
       />
       <Route 
         path="/edit-post/:postId"
