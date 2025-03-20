@@ -11,12 +11,14 @@ const VerifyEmailPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-  const email = location.state?.email; // get email
+  const email = location.state?.email;
   const [verificationCode, setVerificationCode] = useState("");
-  const [message, setMessage] = useState("Send Verification Code"); // default button text
+  const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
+  const [timer, setTimer] = useState(0);
+  const [isResendDisabled, setIsResendDisabled] = useState(false);
+  const [isFirstRequest, setIsFirstRequest] = useState(true); // Track first-time request
 
-  // Check if the user is already verified when the page loads
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (storedUser?.verified) {
@@ -24,45 +26,61 @@ const VerifyEmailPage = () => {
     }
   }, [navigate]);
 
-  // Request a new verification code
+  // Countdown logic (only starts after clicking the button)
+  useEffect(() => {
+    if (timer > 0) {
+      setIsResendDisabled(true);
+      const interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+
+      return () => clearInterval(interval);
+    } else {
+      setIsResendDisabled(false);
+    }
+  }, [timer]);
+
+  // Send or Resend Verification Code
   const requestVerificationCode = async () => {
     try {
+      setIsFirstRequest(false); // After first request, always show "Resend Verification Code"
+      setIsResendDisabled(true);
+      setTimer(60);
+
       const response = await axios.post(VERIFY_REQUEST_URL, { email }, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
 
-      setMessage(response.data.message || "Resend Verification Code");
+      setMessage(response.data.message || "A new verification code has been sent.");
       setError(null);
     } catch (err) {
       setError(err.response?.data?.error || "Failed to request verification code.");
+      setIsResendDisabled(false);
     }
   };
 
-  // Submit the verification code
+  // Verify Email
   const handleVerify = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post(VERIFY_URL, { email, code: verificationCode }, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
-  
+
       alert(response.data.message);
-      
-      // Update local storage to mark user as verified
+
       const updatedUser = { ...JSON.parse(localStorage.getItem("user")), verified: true };
       localStorage.setItem("user", JSON.stringify(updatedUser));
-  
-      // Update Redux store to reflect verification status
+
       dispatch(login({ user: updatedUser, token: localStorage.getItem("token") }));
-  
+
       setTimeout(() => {
         navigate("/home");
-      }, 200);  // Delayed navigation to prevent race conditions
+      }, 200);
     } catch (err) {
       setError(err.response?.data?.error || "Invalid verification code.");
     }
   };
-  
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
@@ -82,16 +100,28 @@ const VerifyEmailPage = () => {
             placeholder="Enter verification code"
             value={verificationCode}
             onChange={(e) => setVerificationCode(e.target.value)}
-            className="border p-2 w-full"
+            className="border p-2 w-full rounded-md focus:outline-none focus:ring focus:border-blue-500"
             required
           />
-          <button type="submit" className="bg-blue-500 text-white p-2 rounded w-full">
+          <button 
+            type="submit" 
+            className="bg-blue-500 text-white p-2 rounded w-full hover:bg-blue-600 transition duration-300"
+          >
             Verify Email
           </button>
         </form>
 
-        <button onClick={requestVerificationCode} className="mt-4 text-blue-500 w-full">
-          {message}
+        {/* Send/Resend Verification Code Button */}
+        <button 
+          onClick={requestVerificationCode} 
+          className={`mt-4 p-2 w-full rounded-md transition duration-300 ${
+            isResendDisabled 
+              ? "bg-gray-400 text-white cursor-not-allowed" 
+              : "bg-yellow-500 text-white hover:bg-yellow-600"
+          }`}
+          disabled={isResendDisabled}
+        >
+          {isFirstRequest ? "Send Verification Code" : (isResendDisabled ? `Resend Code in ${timer}s` : "Resend Verification Code")}
         </button>
       </div>
     </div>

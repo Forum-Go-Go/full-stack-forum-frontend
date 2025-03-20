@@ -34,7 +34,7 @@ const DraftsPage = () => {
   if (error) return <div className="text-center mt-20 text-red-500">{error}</div>;
 
   return (
-    <div className="max-w-4xl mx-auto mt-12 p-6 bg-white shadow-lg rounded-lg">
+    <div className="max-w-4xl mx-auto mt-20 p-6 bg-white shadow-lg rounded-lg">
       <h2 className="text-3xl font-bold text-gray-700 text-center mb-6">📝 Your Drafts</h2>
 
       {drafts.length > 0 ? (

@@ -7,6 +7,7 @@ const LoginPage = () => {
   const location = useLocation();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
+  const [banned, setBanned] = useState(false);  // Track banned status
   const [showEmailPopup, setEmailPopup] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -36,6 +37,11 @@ const LoginPage = () => {
 
       const data = await response.json();
       if (!response.ok) {
+        if (data.error === "User is banned") {
+          setBanned(true);
+          setError("Your account has been banned. Contact support for help.");
+          return;
+        }
         throw new Error(data.error || "Login failed");
       }
 
@@ -73,6 +79,13 @@ const LoginPage = () => {
         
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
+        {banned && (
+          <p className="text-center text-gray-600 mt-2">
+            Need help?{" "}
+            <Link to="/contactus" className="text-red-500 hover:underline">Contact Support</Link>
+          </p>
+        )}
+
         <form onSubmit={handleLogin} className="space-y-4">
           <input
             type="email"
@@ -99,9 +112,15 @@ const LoginPage = () => {
             Login
           </button>
         </form>
+
         <p className="text-center text-gray-600 mt-4">
-          Don't have account? {" "}
+          Don't have an account?{" "}
           <Link to="/users/register" className="text-blue-500 hover:underline">Sign Up Here</Link>
+        </p>
+
+        <p className="text-center text-gray-600 mt-2">
+          Need assistance?{" "}
+          <Link to="/contactus" className="text-red-500 hover:underline">Contact Us</Link>
         </p>
       </div>
 

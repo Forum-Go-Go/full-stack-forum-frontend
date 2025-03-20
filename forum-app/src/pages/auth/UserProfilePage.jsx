@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from "jwt-decode";  
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -11,37 +11,46 @@ const UserProfilePage = () => {
   const [uploading, setUploading] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
+  // ✅ Extract verified status from JWT
+  const token = localStorage.getItem("token");
+  let isVerified = false;
+  let userId = null;
 
+  if (token) {
+    try {
+      const decodedToken = jwtDecode(token);
+      userId = decodedToken.user_id;
+      isVerified = decodedToken.verified;
+    } catch (err) {
+      console.error("Failed to decode JWT:", err);
+    }
+  }
+
+  useEffect(() => {
     if (!token) {
       setError("No token found, please log in.");
       setLoading(false);
       return;
     }
 
-    try {
-      const decodedToken = jwtDecode(token);
-      const userId = decodedToken.user_id;  
-      if (!userId) {
-        throw new Error("Invalid JWT: user_id is missing.");
-      }
-
-      fetchUserProfile(userId);
-    } catch (err) {
-      console.error("Failed to decode JWT:", err);
+    if (!userId) {
       setError("Invalid token. Please log in again.");
       setLoading(false);
+      return;
     }
+
+    fetchUserProfile(userId);
   }, []);
 
   const fetchUserProfile = async (userId) => {
     try {
       const response = await axios.get(`http://127.0.0.1:5009/users/${userId}/profile`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
       });
+
+      console.log("Fetched user data:", response.data.user); 
       setUserProfile(response.data.user);
       setLoading(false);
     } catch (err) {
@@ -66,9 +75,6 @@ const UserProfilePage = () => {
     formData.append("profileImage", selectedFile);
 
     try {
-      const token = localStorage.getItem("token");
-      const userId = jwtDecode(token).user_id;
-
       await axios.put(`http://127.0.0.1:5009/users/${userId}/profile`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -78,7 +84,7 @@ const UserProfilePage = () => {
 
       alert("Profile image updated successfully!");
       setUploading(false);
-      fetchUserProfile(userId); // 重新获取用户数据，更新头像
+      fetchUserProfile(userId);
     } catch (err) {
       console.error("Failed to upload image:", err);
       alert("Failed to update profile image.");
@@ -95,36 +101,36 @@ const UserProfilePage = () => {
   }
 
   return (
-    <div className="max-w-3xl mx-auto mt-24 p-6 bg-white shadow-lg rounded-lg">
-      <h2 className="text-3xl font-semibold text-gray-700 text-center">User Profile</h2>
+    <div className="max-w-3xl mx-auto mt-16 p-8 bg-white shadow-md rounded-xl">
+      <h2 className="text-3xl font-bold text-gray-800 text-center mb-6">User Profile</h2>
 
-      <div className="flex flex-col items-center mt-6">
-        <img
-          src={userProfile.profileImageURL}
-          alt="Profile"
-          className="w-32 h-32 rounded-full object-cover border-2 border-gray-300"
-        />
-        <h3 className="mt-4 text-xl font-medium text-gray-800">
-          {userProfile.firstName} {userProfile.lastName}
+      <div className="flex flex-col items-center">
+        {/* Profile Image */}
+        <div className="relative">
+          <img
+            src={userProfile?.profileImageURL || "/default-profile.png"}
+            alt="Profile"
+            className="w-32 h-32 rounded-full object-cover border-4 border-gray-300 shadow-md hover:shadow-lg transition"
+          />
+        </div>
+
+        <h3 className="mt-4 text-xl font-semibold text-gray-900">
+          {userProfile?.firstName} {userProfile?.lastName}
         </h3>
-        <p className="text-gray-500">{userProfile.email}</p>
-        <p className="text-sm text-gray-400">Joined on {userProfile.dateJoined}</p>
-        <span className="mt-2 px-4 py-1 bg-blue-500 text-white text-sm rounded-lg">
-          {userProfile.type.toUpperCase()}
+        <p className="text-gray-500">{userProfile?.email}</p>
+        <p className="text-sm text-gray-400">Joined on {userProfile?.dateJoined}</p>
+
+        {/* Role Badge */}
+        <span className="mt-2 px-4 py-1 bg-blue-600 text-white text-sm rounded-lg shadow">
+          {userProfile?.type?.toUpperCase()}
         </span>
 
-        {/* 修改头像功能 */}
+        {/* Profile Image Upload */}
         <div className="mt-4">
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            className="hidden"
-            id="fileUpload"
-          />
+          <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" id="fileUpload" />
           <label
             htmlFor="fileUpload"
-            className="cursor-pointer px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+            className="cursor-pointer px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
           >
             Choose New Profile Image
           </label>
@@ -132,7 +138,7 @@ const UserProfilePage = () => {
           {selectedFile && (
             <button
               onClick={handleUpload}
-              className="ml-3 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+              className="ml-3 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 shadow-md"
               disabled={uploading}
             >
               {uploading ? "Uploading..." : "Upload"}
@@ -140,25 +146,39 @@ const UserProfilePage = () => {
           )}
         </div>
 
-        {/* 按钮区域 */}
-        <div className="mt-6">
+        {/* Display Verified or Verify Email Button */}
+        {isVerified ? (
+          <span className="mt-4 px-4 py-2 bg-green-500 text-white rounded-md shadow-md">
+            Email Already Verified
+          </span>
+        ) : (
+          <button
+            onClick={() => navigate("/verify-email", { state: { email: userProfile?.email } })}
+            className="mt-4 px-6 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 shadow-md transition"
+          >
+            Verify Email
+          </button>
+        )}
+
+        {/* Navigation Buttons */}
+        <div className="mt-6 flex space-x-4">
           <button 
             onClick={() => navigate("/top-posts")} 
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 shadow-md"
           >
             View Top Posts
           </button>
 
           <button 
             onClick={() => navigate("/drafts")} 
-            className="ml-3 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 shadow-md"
           >
             View Drafts
           </button>
 
           <button 
             onClick={() => navigate("/history")} 
-            className="ml-3 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 shadow-md"
           >
             View History
           </button>
