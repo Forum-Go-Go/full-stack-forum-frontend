@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
+import { fetchUser } from "../../redux/slices/userSlice.js";
+import { useDispatch, useSelector } from 'react-redux';
 
 const PostDetailPage = () => {
   const { postId } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [post, setPost] = useState(null);
+  const user = useSelector((state) => state.user?.users[post?.userId] || {});
   const [replies, setReplies] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -16,7 +20,14 @@ const PostDetailPage = () => {
     const fetchPost = async () => {
       try {
         const response = await axios.get(`http://127.0.0.1:5002/posts/${postId}`);
+        const new_post = response.data.post
         setPost(response.data.post);
+  
+        if (new_post && new_post?.userId) {
+          dispatch(fetchUser(new_post?.userId))
+            .unwrap()
+            .catch((err) => console.error("Failed to fetch user:", err));
+        }
       } catch (err) {
         console.error('Error fetching post:', err);
         setError('Error fetching post. Please try again later.');
@@ -26,16 +37,40 @@ const PostDetailPage = () => {
     };
 
     const fetchReplies = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(`http://127.0.0.1:5003/replies/post/${postId}`);
-        setReplies(response.data);
+        let newReplies = response.data;
+    
+        // Fetch user data for each reply and attach to reply object
+        const enrichedReplies = await Promise.all(
+          newReplies.map(async (reply) => {
+            try {
+              const userResponse = await axios.get(`http://127.0.0.1:5009/users/${reply.reply.userId}/profile`, {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+              });
+              const userName = `${userResponse.data.user.firstName} ${userResponse.data.user.lastName}`
+              return {
+                ...reply,
+                userName // or whatever field contains the name
+              };
+            } catch (userErr) {
+              console.error(`Failed to fetch user for reply ${reply.id}:`, userErr);
+              return { ...reply, userName: "Unknown User" };
+            }
+          })
+        );
+    
+        setReplies(enrichedReplies);
       } catch (err) {
         console.error('Error fetching replies:', err);
         setError('Error fetching replies. Please try again later.');
       } finally {
         setLoading(false);
       }
-    };
+    };    
 
     fetchPost();
     fetchReplies();
@@ -83,9 +118,10 @@ const PostDetailPage = () => {
   const isPostUnpublished = post.status === 'Unpublished';
 
   return (
-    <div className="flex flex-col items-center p-6">
+    <div className="flex flex-col items-center mt-16 p-6">
       <div className="w-full max-w-3xl bg-white shadow-lg rounded-xl p-6">
-        <h2 className="text-3xl font-bold mb-2">{post.title}</h2>
+        <h2 className="text-3xl font-bold mb-2">Title: {post.title}</h2>
+        <p className="text-gray-500 text-sm mb-4">Author: {user.firstName + " " + user.lastName}</p>
         <p className="text-gray-500 text-sm mb-4">Created on: {post.dateCreated}</p>
         <p className="text-gray-600 mb-2">
           <span className="font-semibold">Status:</span> {post.status}
@@ -110,8 +146,9 @@ const PostDetailPage = () => {
           {replies && replies.length > 0 ? (
             <div>
               {replies.map((reply) => (
-                <div key={reply.id} className="border-b pb-4 mb-4">
-                  <p className="font-semibold">{reply.reply.comment}</p>
+                <div key={reply.reply.replyId} className="border-b pb-4 mb-4">
+                  <p className="font-semibold">Author: {reply.userName}</p>
+                  <p className="font-semibold">Reply: {reply.reply.comment}</p>
                   <p className="text-gray-500 text-sm">Posted on: {reply.reply.dateCreated}</p>
                 </div>
               ))}

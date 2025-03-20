@@ -65,10 +65,10 @@ const GlobalNavBar = () => {
 
   const adminNav = [
     { path: "/home", label: "Home" },
-    { path: "/profile", label: "User Profile" },
     { path: "/user-posts", label: "My Posts" },
     { path: "/user-management", label: "User Management" },
     { path: "/messages", label: "Messages Management" },
+    { path: "/profile", label: "User Profile" },
   ];
 
   const superAdminNav = [
