@@ -14,12 +14,18 @@ export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
 });
 
 export const deletePost = createAsyncThunk("posts/deletePost", async (postId) => {
-  await axios.put(`${POST_API_URL}/${postId}/status`, {"status": "Deleted"});
+  await axios.put(`http://127.0.0.1:5009/posts/${postId}/status`, {"status": "Deleted"},     {
+    headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` },
+  });
   return postId;
 });
 
 export const toggleArchive = createAsyncThunk("posts/toggleArchive", async (postId) => {
-  const response = await axios.put(`${POST_API_URL}/${postId}/toggle-archive`);
+  const response = await axios.put(`http://127.0.0.1:5009/posts/${postId}/toggle-archive`,
+    {},
+    {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` },
+    });
   return response.data;
 });
 

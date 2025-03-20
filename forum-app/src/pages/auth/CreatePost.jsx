@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const CreatePostForm = () => {
   // State to manage form fields
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [status, setStatus] = useState('DRAFT'); // Default status is 'DRAFT'
+  const [status, setStatus] = useState('Unpublished'); // Default status is 'Unpublished'
   const [image, setImage] = useState(null); // State for image upload
   const [attachments, setAttachments] = useState([]); // State for multiple attachments
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Initialize navigate hook
+  const navigate = useNavigate();
 
   // Handle form input changes
   const handleTitleChange = (e) => setTitle(e.target.value);
@@ -41,11 +45,13 @@ const CreatePostForm = () => {
       attachments, // Add attachments files
     };
 
+    console.log('Selected status:', status); // Debugging: check the selected status
+
     try {
       const formData = new FormData();
       formData.append('title', title);
       formData.append('content', content);
-      formData.append('status', status);
+      formData.append('status', status); // Pass the status as selected
 
       if (image) {
         formData.append('image', image); // Add image file to FormData
@@ -62,11 +68,19 @@ const CreatePostForm = () => {
           'Authorization': `Bearer ${localStorage.getItem("token")}`
         },
       });
+
       console.log('Post created successfully:', response.data);
+
+      // Show success alert
+      alert('Post has been created successfully!');
+
+      // Redirect to user-posts page (or wherever you want to navigate)
+      navigate('/user-posts'); // Update this path if necessary
+
       // Optionally reset form or show success message
       setTitle('');
       setContent('');
-      setStatus('DRAFT');
+      setStatus('Unpublished');
       setImage(null);
       setAttachments([]);
     } catch (err) {
@@ -115,8 +129,8 @@ const CreatePostForm = () => {
             onChange={handleStatusChange}
             className="mt-1 px-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="DRAFT">Draft</option>
-            <option value="PUBLISHED">Published</option>
+            <option value="Unpublished">Draft</option>
+            <option value="Published">Published</option>
           </select>
         </div>
 
