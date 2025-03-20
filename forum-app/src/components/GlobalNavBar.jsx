@@ -60,13 +60,13 @@ const GlobalNavBar = () => {
   const normalUserNav = [
     { path: "/home", label: "Home" },
     { path: "/create-post", label: "Create New Post"},
-    { path: "/history", label: "History Management"},
     { path: "/profile", label: "User Profile" },
     { path: "/contactus", label: "Contact Us"}
   ];
 
   const adminNav = [
     { path: "/home", label: "Home" },
+    { path: "/profile", label: "User Profile" },
     { path: "/user-management", label: "User Management" },
     { path: "/messages", label: "Messages Management" },
   ];

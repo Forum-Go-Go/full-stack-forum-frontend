@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const UserProfilePage = () => {
   const [userProfile, setUserProfile] = useState(null);
@@ -8,6 +9,7 @@ const UserProfilePage = () => {
   const [error, setError] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -20,8 +22,6 @@ const UserProfilePage = () => {
 
     try {
       const decodedToken = jwtDecode(token);
-      console.log("Decoded JWT:", decodedToken);
-
       const userId = decodedToken.user_id;  
       if (!userId) {
         throw new Error("Invalid JWT: user_id is missing.");
@@ -55,14 +55,6 @@ const UserProfilePage = () => {
     const file = event.target.files[0];
     if (file) {
       setSelectedFile(file);
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setUserProfile((prev) => ({
-          ...prev,
-          profileImageURL: e.target.result,
-        }));
-      };
-      reader.readAsDataURL(file);
     }
   };
 
@@ -86,6 +78,7 @@ const UserProfilePage = () => {
 
       alert("Profile image updated successfully!");
       setUploading(false);
+      fetchUserProfile(userId); // 重新获取用户数据，更新头像
     } catch (err) {
       console.error("Failed to upload image:", err);
       alert("Failed to update profile image.");
@@ -120,6 +113,7 @@ const UserProfilePage = () => {
           {userProfile.type.toUpperCase()}
         </span>
 
+        {/* 修改头像功能 */}
         <div className="mt-4">
           <input
             type="file"
@@ -145,49 +139,29 @@ const UserProfilePage = () => {
             </button>
           )}
         </div>
-      </div>
 
-      <div className="mt-6">
-        <h3 className="text-xl font-semibold text-gray-700">Activity</h3>
-        <div className="mt-4 space-y-2">
-          <div className="bg-gray-100 p-3 rounded-md">
-            <h4 className="font-medium text-gray-800">Top Posts</h4>
-            {userProfile.topPosts.length > 0 ? (
-              <ul className="list-disc list-inside text-gray-600">
-                {userProfile.topPosts.map((post, index) => (
-                  <li key={index}>{post}</li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-gray-500">No top posts yet.</p>
-            )}
-          </div>
+        {/* 按钮区域 */}
+        <div className="mt-6">
+          <button 
+            onClick={() => navigate("/top-posts")} 
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+          >
+            View Top Posts
+          </button>
 
-          <div className="bg-gray-100 p-3 rounded-md">
-            <h4 className="font-medium text-gray-800">Drafts</h4>
-            {userProfile.drafts.length > 0 ? (
-              <ul className="list-disc list-inside text-gray-600">
-                {userProfile.drafts.map((draft, index) => (
-                  <li key={index}>{draft}</li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-gray-500">No drafts saved.</p>
-            )}
-          </div>
+          <button 
+            onClick={() => navigate("/drafts")} 
+            className="ml-3 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+          >
+            View Drafts
+          </button>
 
-          <div className="bg-gray-100 p-3 rounded-md">
-            <h4 className="font-medium text-gray-800">View History</h4>
-            {userProfile.viewHistory.length > 0 ? (
-              <ul className="list-disc list-inside text-gray-600">
-                {userProfile.viewHistory.map((view, index) => (
-                  <li key={index}>{view}</li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-gray-500">No view history available.</p>
-            )}
-          </div>
+          <button 
+            onClick={() => navigate("/history")} 
+            className="ml-3 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+          >
+            View History
+          </button>
         </div>
       </div>
     </div>
