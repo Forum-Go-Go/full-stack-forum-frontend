@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 
 const EditPostForm = () => {
   const { postId } = useParams();
-  const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [status, setStatus] = useState('');
@@ -66,13 +65,7 @@ const EditPostForm = () => {
   return (
     <>
       {JSON.parse(localStorage.getItem("user")).id === postUserId ? (
-        <div className="flex flex-col items-center p-6">
-        <button
-            className="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
-            onClick={() => navigate('/')}
-        >
-            Back to Posts
-        </button>
+        <div className="flex flex-col items-center mt-16 p-6">
           <h2 className="text-2xl font-bold mb-6">Edit Post</h2>
           <form onSubmit={handleSubmit} className="flex flex-col w-full max-w-lg space-y-4">
             <div>
@@ -115,17 +108,17 @@ const EditPostForm = () => {
             >
               {loading ? 'Updating Post...' : 'Update Post'}
             </button>
+            <Link className={`px-6 py-2 mt-4 rounded-md text-white text-center ${
+                loading ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-600'
+              }`}
+              to='/user-posts'>
+              Back to Posts
+            </Link>
           </form>
           {error && <p className="mt-4 text-red-500">{error}</p>}
         </div>
       ) : (
         <>
-        <button
-            className="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
-            onClick={() => navigate('/')}
-        >
-            Back to Posts
-        </button>
         <div className="flex items-center justify-center h-screen">
           <p className="text-xl text-red-500 font-semibold">You are not authorized to edit this post.</p>
         </div>

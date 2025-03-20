@@ -60,7 +60,7 @@ const UserPostPage = () => {
 //   }
 
   return (
-    <div className="flex flex-col items-center p-6">
+    <div className="flex flex-col items-center mt-16 p-6">
       <h1 className="text-2xl font-bold mb-4">Your Posts</h1>
 
       <button
@@ -108,7 +108,7 @@ const UserPostPage = () => {
             <p className="text-gray-800 line-clamp-3">Content: {postObj.post.content}</p>
             {postObj.post.status && <p>Status: {postObj.post.status}</p>}
 
-            <div className="flex gap-2 mt-4">
+            {postObj.post.status !== "Deleted" && (<div className="flex gap-2 mt-4">
               <button
                 className="px-3 py-1 bg-yellow-500 text-white rounded"
                 onClick={(e) => {
@@ -138,7 +138,7 @@ const UserPostPage = () => {
               >
                 Delete
               </button>
-            </div>
+            </div>)}
           </div>
         ))}
       </div>

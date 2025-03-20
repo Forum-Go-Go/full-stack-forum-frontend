@@ -92,7 +92,7 @@ const CreatePostForm = () => {
   };
 
   return (
-    <div className="flex flex-col items-center p-6">
+    <div className="flex flex-col items-center mt-16 p-6">
       <h2 className="text-2xl font-bold mb-6">Create a New Post</h2>
 
       {/* Form */}
