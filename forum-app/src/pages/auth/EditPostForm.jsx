@@ -97,14 +97,14 @@ const EditPostForm = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Status</label>
-              <select
+              {status === "Unpublished" && (<select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
                 className="mt-1 px-4 py-2 w-full border rounded-md"
               >
                 <option value="Unpublished">Draft</option>
                 <option value="Published">Published</option>
-              </select>
+              </select>)}
             </div>
             <button
               type="submit"

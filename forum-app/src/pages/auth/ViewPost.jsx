@@ -91,13 +91,12 @@ const ViewPost = () => {
           <span className="font-semibold">Status:</span> {post.status}
         </p>
         <div className="prose max-w-none text-gray-800 mb-6">Content: {post.content}</div>
-
-        {post.images && post.images.length > 0 && (
+        {post.images && (
           <div className="mb-6">
             <h3 className="text-xl font-semibold mb-3">Image</h3>
             <div className="flex justify-center">
               <img
-                src={post.images[0]}
+                src={post.images}
                 alt="Post image"
                 className="rounded-lg shadow hover:scale-105 transition-transform duration-300 max-h-[400px] object-contain"
               />
