@@ -11,7 +11,7 @@ export const fetchPosts = createAsyncThunk("posts/fetchPosts", async (_, { getSt
       Authorization: `Bearer ${token}`,
     },
   });
-  return response.data.filter((post) => post.post.status === "Published");
+  return response.data;
 });
 
 
