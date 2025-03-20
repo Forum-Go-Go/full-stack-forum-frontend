@@ -15,6 +15,8 @@ import ViewPost from "./pages/auth/ViewPost";
 import UserProfilePage from "./pages/auth/UserProfilePage";
 import GlobalNavBar from "./components/GlobalNavBar";
 import HistoryPage from "./pages/auth/HistoryPage";
+import TopPostsPage from "./pages/auth/TopPostsPage";
+import DraftsPage from "./pages/auth/DraftsPage";
 
 const App = () => {
   const { isAuthenticated } = useSelector((state) => state.auth);
@@ -46,7 +48,6 @@ const App = () => {
             </PrivateRoute>
           }
         />
-        <Route path="/profile" element={<UserProfilePage />} />
         <Route
           path="/profile"
           element={
@@ -60,6 +61,22 @@ const App = () => {
           element={
             <PrivateRoute allowedRoles={["user"]}>
               <HistoryPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/top-posts"
+          element={
+            <PrivateRoute allowedRoles={["user"]}>
+              <TopPostsPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/drafts"
+          element={
+            <PrivateRoute allowedRoles={["user"]}>
+              <DraftsPage />
             </PrivateRoute>
           }
         />
