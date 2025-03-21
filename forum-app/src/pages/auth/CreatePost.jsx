@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 const CreatePostForm = () => {
   // State to manage form fields
@@ -73,8 +74,6 @@ const CreatePostForm = () => {
         }
       );
 
-      console.log("Post created successfully:", response.data);
-
       // Show success alert
       alert("Post has been created successfully!");
 
@@ -94,6 +93,17 @@ const CreatePostForm = () => {
       setLoading(false); // End loading state
     }
   };
+
+  let verified = false;
+  try {
+    const token = localStorage.getItem("token");
+    if (token) {
+      verified = jwtDecode(token).verified;
+    }
+  } catch (error) {
+    console.error("Invalid or expired token:", error);
+    localStorage.removeItem("token"); // Optional: Remove invalid token
+  }
 
   return (
     <div className="flex flex-col items-center mt-16 p-6">
@@ -174,15 +184,21 @@ const CreatePostForm = () => {
         </div>
 
         {/* Submit Button */}
-        <button
-          type="submit"
-          disabled={loading}
-          className={`px-6 py-2 mt-4 rounded-md text-white ${
-            loading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
-          } focus:outline-none`}
-        >
-          {loading ? "Creating Post..." : "Create Post"}
-        </button>
+        {verified ? (
+          <button
+            type="submit"
+            disabled={loading}
+            className={`px-6 py-2 mt-4 rounded-md text-white ${
+              loading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
+            } focus:outline-none`}
+          >
+            {loading ? "Creating Post..." : "Create Post"}
+          </button>
+        ) : (
+          <p className="mt-4 text-red-500">
+            You must be verified in order to create a post.
+          </p>
+        )}
       </form>
 
       {/* Error message */}
