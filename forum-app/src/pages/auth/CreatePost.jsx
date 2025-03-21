@@ -6,9 +6,10 @@ import { jwtDecode } from "jwt-decode";
 const CreatePostForm = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [status, setStatus] = useState("Unpublished");
-  const [image, setImage] = useState(null);
-  const [attachments, setAttachments] = useState([]);
+
+  const [status, setStatus] = useState("Unpublished"); // Default status is 'Unpublished'
+  const [images, setImages] = useState([]);  // allow user to upload multiple images
+  const [attachments, setAttachments] = useState([]); // State for multiple attachments
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -19,18 +20,18 @@ const CreatePostForm = () => {
   const handleStatusChange = (e) => setStatus(e.target.value);
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setImage(file);
+    const files = Array.from(e.target.files);
+    setImages((prev) => [...prev, ...files]);
   };
 
   const handleAttachmentsChange = (e) => {
     const files = Array.from(e.target.files);
-    setAttachments(files);
+    setAttachments((prev) => [...prev, ...files]); // Append new files to the list
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault(); // Prevent page reload on form submit
+    setLoading(true); // Start loading state
 
     try {
       const formData = new FormData();
@@ -38,13 +39,18 @@ const CreatePostForm = () => {
       formData.append("content", content);
       formData.append("status", status);
 
-      if (image) {
-        formData.append("image", image);
-      }
+      // Append multiple images
+      images.forEach((image) => {
+        formData.append("images", image); 
+      });
+
+      console.log("FormData images:", formData.getAll("images"));
 
       attachments.forEach((attachment, index) => {
         formData.append(`attachments[${index}]`, attachment);
       });
+
+      console.log("FormData images:", formData.getAll("images"));
 
       const response = await axios.post(
         "http://127.0.0.1:5009/posts",
@@ -64,7 +70,7 @@ const CreatePostForm = () => {
       setTitle("");
       setContent("");
       setStatus("Unpublished");
-      setImage(null);
+      setImages([]);
       setAttachments([]);
     } catch (err) {
       setError("Error creating post. Please try again.");
@@ -136,6 +142,8 @@ const CreatePostForm = () => {
           <input
             type="file"
             accept="image/*"
+            name="images"
+            multiple  // allow multiple images
             onChange={handleImageChange}
             className="mt-1 w-full text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -146,7 +154,7 @@ const CreatePostForm = () => {
           </label>
           <input
             type="file"
-            multiple
+            multiple  // allow multiple files
             onChange={handleAttachmentsChange}
             className="mt-1 w-full text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />

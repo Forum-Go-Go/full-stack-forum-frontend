@@ -3,6 +3,7 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchUser } from "../../redux/slices/userSlice.js";
 import { useDispatch, useSelector } from "react-redux";
+import { FiDownload } from "react-icons/fi";
 import { jwtDecode } from "jwt-decode";
 
 const PostDetailPage = () => {
@@ -16,6 +17,13 @@ const PostDetailPage = () => {
   const [error, setError] = useState("");
   const [newReply, setNewReply] = useState(""); // To handle new reply input
   const [replyLoading, setReplyLoading] = useState(false);
+
+  // resolve images and attachments into array
+  // const images = post?.images && typeof post.images === "string"
+  // ? post.images.split(",").map(img => img.trim())
+  // : [];
+  const images = post?.images ? post.images.split(",").map(img => img.trim()) : [];
+  const attachments = post?.attachments ? post.attachments.split(",").map(file => file.trim()) : [];
 
   const fetchReplies = async () => {
     setLoading(true);
@@ -78,6 +86,7 @@ const PostDetailPage = () => {
           }
         );
         const new_post = response.data.post;
+        console.log("Fetched post:", response.data.post);
         setPost(response.data.post);
 
         if (new_post && new_post?.userId) {
@@ -216,18 +225,47 @@ const PostDetailPage = () => {
           </div>
 
           {/* Post Image */}
-          {post.images && (
+          {images.length > 0 && (
             <div className="mb-6">
-              <h3 className="text-xl font-semibold mb-3">Image</h3>
-              <div className="flex justify-center">
-                <img
-                  src={post.images}
-                  alt="Post image"
-                  className="rounded-lg shadow-xl hover:scale-105 transition-transform duration-300 max-h-[400px] object-contain"
-                />
+              <h3 className="text-xl font-semibold mb-3">Images</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {images.map((image, index) => (
+                  <img
+                    key={index}
+                    src={image}
+                    alt={`Post image ${index + 1}`}
+                    className="rounded-lg shadow-xl hover:scale-105 transition-transform duration-300 max-h-[300px] object-contain"
+                  />
+                ))}
               </div>
             </div>
           )}
+
+          {/* Post Attachments */}
+            {attachments.length > 0 && (
+              <div className="mb-6">
+                <h3 className="text-xl font-semibold mb-3">Attachments</h3>
+                <ul className="space-y-2">
+                  {attachments.map((fileUrl, index) => {
+                    try {
+                      const fileName = new URL(fileUrl).pathname.split("/").pop();
+                      return (
+                        <li key={index} className="flex items-center gap-2 text-blue-600 hover:underline">
+                          <FiDownload className="text-xl" />
+                          <a href={fileUrl.trim()} download target="_blank" rel="noopener noreferrer">
+                            {fileName}
+                          </a>
+                        </li>
+                      );
+                    } catch (error) {
+                      console.error("Invalid file URL:", error);
+                      return null;
+                    }
+                  })}
+                </ul>
+              </div>
+            )}
+
 
           {/* Replies Section with Scroll */}
           <div className="mt-6 border-t pt-6">
