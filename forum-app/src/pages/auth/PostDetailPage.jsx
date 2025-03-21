@@ -172,7 +172,6 @@ const PostDetailPage = () => {
 
   return (
     <>
-      {!isPostBanned && !isPostDeleted && !isPostHidden ? (
         <div className="flex flex-col items-center mt-16 p-8">
           <div className="w-full max-w-3xl bg-white shadow-2xl rounded-xl p-8 border-2 border-gray-200">
             <h2 className="text-3xl font-bold mb-4 text-gray-800">
@@ -268,7 +267,7 @@ const PostDetailPage = () => {
             </div>
 
             {/* Add Reply Form */}
-            {post.isArchived ? (
+            {isPostBanned && isPostDeleted && isPostHidden && post.isArchived ? (
               <p className="text-red-500">
                 This post has been {post.isArchived ? "Archived" : post.status}.
               </p>
@@ -320,13 +319,6 @@ const PostDetailPage = () => {
             </div>
           </div>
         </div>
-      ) : (
-        <div className="flex items-center justify-center h-screen">
-          <p className="text-xl text-red-500 font-semibold">
-            This post is {post.status}.
-          </p>
-        </div>
-      )}
     </>
   );
 };
