@@ -20,7 +20,10 @@ const PostDetailPage = () => {
     const fetchPost = async () => {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:5002/posts/${postId}`
+          `http://127.0.0.1:5009/posts/${postId}`,
+          {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` },
+          }
         );
         const new_post = response.data.post;
         setPost(response.data.post);
@@ -133,7 +136,6 @@ const PostDetailPage = () => {
     try {
       await axios.put(
         `http://127.0.0.1:5009/replies/delete/${replyId}`,
-        {},
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

@@ -1,11 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const POST_API_URL = "http://127.0.0.1:5002/posts";
+const POST_API_URL = "http://127.0.0.1:5009/posts";
  
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
   const user = JSON.parse(localStorage.getItem("user"));
-  const response = await axios.get(POST_API_URL);
+  const response = await axios.get(POST_API_URL, {
+    headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` },
+  });
+  
 
   // Return all posts belonging to the user, regardless of status
   const userPosts = response.data.filter((post) => post.post.userId === user.id);
