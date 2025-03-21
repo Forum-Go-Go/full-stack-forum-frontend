@@ -75,10 +75,10 @@ const HistoryPage = () => {
     }
   };
 
-    // Navigate to Post Detail Page when clicking a postId
-    const handlePostClick = (postId) => {
-      navigate(`/post/${postId}`); 
-    };
+  // Navigate to Post Detail Page when clicking a post title
+  const handlePostClick = (postId) => {
+    navigate(`/post/${postId}`);
+  };
 
   if (loading) {
     return <div className="text-center mt-20 text-gray-600">Loading history...</div>;
@@ -103,7 +103,7 @@ const HistoryPage = () => {
                   className="text-gray-800 cursor-pointer hover:text-blue-500 font-medium"
                   onClick={() => handlePostClick(entry.postId)}
                 >
-                  Post ID: {entry.postId}
+                  {entry.title}  {/* Display Post Title Instead of Post ID */}
                 </p>
                 <p className="text-sm text-gray-500">Viewed on: {entry.viewDate}</p>
               </div>

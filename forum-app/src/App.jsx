@@ -59,7 +59,7 @@ const App = () => {
         <Route
           path="/history"
           element={
-            <PrivateRoute allowedRoles={["user"]}>
+            <PrivateRoute allowedRoles={["user", "admin", "super_admin"]}>
               <HistoryPage />
             </PrivateRoute>
           }
@@ -67,7 +67,7 @@ const App = () => {
         <Route
           path="/top-posts"
           element={
-            <PrivateRoute allowedRoles={["user"]}>
+            <PrivateRoute allowedRoles={["user", "admin", "super_admin"]}>
               <TopPostsPage />
             </PrivateRoute>
           }
@@ -75,7 +75,7 @@ const App = () => {
         <Route
           path="/drafts"
           element={
-            <PrivateRoute allowedRoles={["user"]}>
+            <PrivateRoute allowedRoles={["user", "admin", "super_admin"]}>
               <DraftsPage />
             </PrivateRoute>
           }
