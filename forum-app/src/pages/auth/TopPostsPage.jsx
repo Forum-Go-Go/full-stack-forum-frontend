@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const TopPostsPage = () => {
   const [topPosts, setTopPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTopPosts = async () => {
@@ -40,12 +42,14 @@ const TopPostsPage = () => {
       {topPosts.length > 0 ? (
         <div className="space-y-4">
           {topPosts.map((post) => (
-            <div key={post.id} className="p-4 border border-gray-200 rounded-lg shadow hover:shadow-md transition">
-              {/* Clickable title to navigate to post details */}
-              <Link to={`/post/${post.id}`} className="text-xl font-semibold text-blue-600 hover:underline">
+            <div 
+              key={post.id} 
+              className="p-4 border border-gray-200 rounded-lg shadow hover:shadow-md transition cursor-pointer"
+              onClick={() => navigate(`/post/${post.id}`)}
+            >
+              <h3 className="text-xl font-semibold text-blue-600 hover:underline">
                 {post.title}
-              </Link>
-              {/* Display formatted date */}
+              </h3>
               <p className="text-gray-500 text-sm mt-1">🕒 {new Date(post.dateCreated).toLocaleDateString()}</p>
             </div>
           ))}

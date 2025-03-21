@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 const HistoryPage = () => {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -73,6 +75,11 @@ const HistoryPage = () => {
     }
   };
 
+    // Navigate to Post Detail Page when clicking a postId
+    const handlePostClick = (postId) => {
+      navigate(`/post/${postId}`); 
+    };
+
   if (loading) {
     return <div className="text-center mt-20 text-gray-600">Loading history...</div>;
   }
@@ -92,7 +99,12 @@ const HistoryPage = () => {
           {history.map((entry) => (
             <li key={entry.historyId} className="bg-gray-100 p-4 rounded-md flex justify-between items-center">
               <div>
-                <p className="text-gray-800">Post ID: <span className="font-medium">{entry.postId}</span></p>
+                <p 
+                  className="text-gray-800 cursor-pointer hover:text-blue-500 font-medium"
+                  onClick={() => handlePostClick(entry.postId)}
+                >
+                  Post ID: {entry.postId}
+                </p>
                 <p className="text-sm text-gray-500">Viewed on: {entry.viewDate}</p>
               </div>
               <button
