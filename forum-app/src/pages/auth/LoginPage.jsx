@@ -1,4 +1,4 @@
-import { useState, useEffect  } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { login } from "../../redux/slices/authSlice";
 import { useNavigate, Link, useLocation } from "react-router-dom";
@@ -7,7 +7,7 @@ const LoginPage = () => {
   const location = useLocation();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
-  const [banned, setBanned] = useState(false);  // Track banned status
+  const [banned, setBanned] = useState(false); // Track banned status
   const [showEmailPopup, setEmailPopup] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -48,7 +48,6 @@ const LoginPage = () => {
       const { token, user } = data;
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
-      console.log(token, user);
 
       dispatch(login({ user, token, role: user.role }));
 
@@ -75,14 +74,18 @@ const LoginPage = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-lg w-96">
-        <h2 className="text-3xl font-bold text-center text-blue-600 mb-6">Login</h2>
-        
+        <h2 className="text-3xl font-bold text-center text-blue-600 mb-6">
+          Login
+        </h2>
+
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
         {banned && (
           <p className="text-center text-gray-600 mt-2">
             Need help?{" "}
-            <Link to="/contactus" className="text-red-500 hover:underline">Contact Support</Link>
+            <Link to="/contactus" className="text-red-500 hover:underline">
+              Contact Support
+            </Link>
           </p>
         )}
 
@@ -115,21 +118,28 @@ const LoginPage = () => {
 
         <p className="text-center text-gray-600 mt-4">
           Don't have an account?{" "}
-          <Link to="/users/register" className="text-blue-500 hover:underline">Sign Up Here</Link>
+          <Link to="/users/register" className="text-blue-500 hover:underline">
+            Sign Up Here
+          </Link>
         </p>
 
         <p className="text-center text-gray-600 mt-2">
           Need assistance?{" "}
-          <Link to="/contactus" className="text-red-500 hover:underline">Contact Us</Link>
+          <Link to="/contactus" className="text-red-500 hover:underline">
+            Contact Us
+          </Link>
         </p>
       </div>
 
       {showEmailPopup && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96 text-center">
-            <h3 className="text-xl font-bold text-gray-800">Verify Your Email</h3>
+            <h3 className="text-xl font-bold text-gray-800">
+              Verify Your Email
+            </h3>
             <p className="text-gray-600 mt-2 mb-4">
-              You haven't verified your email yet. Would you like to verify it now?
+              You haven't verified your email yet. Would you like to verify it
+              now?
             </p>
             <div className="flex justify-center space-x-4">
               <button

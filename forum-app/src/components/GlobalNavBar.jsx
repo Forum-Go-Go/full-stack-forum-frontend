@@ -21,11 +21,9 @@ const GlobalNavBar = () => {
     }
 
     try {
-      // ✅ Decode JWT to extract user info
       const decodedToken = jwtDecode(token);
       console.log("Decoded JWT:", decodedToken);
 
-      // ✅ Ensure necessary data exists
       if (!decodedToken.email) {
         console.warn("⚠️ No email found in JWT payload!");
       }
@@ -33,7 +31,7 @@ const GlobalNavBar = () => {
       setUserData({
         email: decodedToken.email,
         role: decodedToken.role || "user",
-        verified: user?.verified || false, // ✅ Keep updated verification status
+        verified: user?.verified || false,
       });
 
       console.log("🔹 Set userData:", {
@@ -47,13 +45,11 @@ const GlobalNavBar = () => {
     }
   }, [token, user]); // ✅ Re-run when token or user changes (for real-time updates)
 
-  // ✅ Logout function
   const handleLogout = () => {
     dispatch(logout());
     navigate("/users/login");
   };
 
-  // ✅ Navigation items based on role
   const normalUserNav = [
     { path: "/home", label: "Home" },
     { path: "/create-post", label: "Create New Post" },
@@ -79,7 +75,6 @@ const GlobalNavBar = () => {
     { path: "/profile", label: "User Profile" },
   ];
 
-  // ✅ Determine navigation items based on role
   let navItems = normalUserNav;
   if (userData?.role === "admin") {
     navItems = adminNav;
@@ -87,7 +82,6 @@ const GlobalNavBar = () => {
     navItems = superAdminNav;
   }
 
-  // ✅ If not authenticated, don't show Navbar
   if (!isAuthenticated) {
     return null;
   }
@@ -95,7 +89,6 @@ const GlobalNavBar = () => {
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-indigo-600 p-4 text-white shadow-lg">
       <div className="container mx-auto flex justify-between items-center">
-        {/* Left Side: App Name */}
         <Link
           to="/home"
           className="text-3xl font-semibold hover:text-indigo-300 transition duration-200"
@@ -103,7 +96,6 @@ const GlobalNavBar = () => {
           Forum
         </Link>
 
-        {/* Center: Navigation Links */}
         <ul className="flex space-x-6">
           {navItems.map((item) => (
             <li key={item.path}>
@@ -117,9 +109,7 @@ const GlobalNavBar = () => {
           ))}
         </ul>
 
-        {/* Right Side: User Info & Logout */}
         <div className="flex items-center space-x-5">
-          {/* ✅ Display user email, role, and verification status */}
           <span className="text-sm font-medium">
             {userData?.email} ({userData?.role}) -
             {userData?.verified ? (
@@ -128,8 +118,6 @@ const GlobalNavBar = () => {
               <span className="text-red-400"> Not Verified ❌</span>
             )}
           </span>
-
-          {/* ✅ Logout Button */}
           <button
             onClick={handleLogout}
             className="bg-red-500 text-white px-5 py-2 rounded-lg hover:bg-red-600 transition duration-300"
