@@ -23,7 +23,7 @@ const App = () => {
 
   return (
     <>
-      {/* ✅ Show Navbar only for authenticated users */}
+      {/* Show Navbar only for authenticated users */}
       {isAuthenticated && <GlobalNavBar />}
 
       <Routes>
@@ -34,10 +34,10 @@ const App = () => {
         <Route path="/contactus" element={<ContactUsPage />} />
         <Route path="/verify-email" element={<VerifyEmailPage />} />
 
-        <Route path="/user-posts" element={<UserPostPage />}/>
-        <Route path="/post/:postId" element={<PostDetailPage />}/>
-        <Route path="/edit-post/:postId" element={<EditPostForm />}/>
-        <Route path="/create-post" element={<CreatePostForm />}/>
+        <Route path="/user-posts" element={<UserPostPage />} />
+        <Route path="/post/:postId" element={<PostDetailPage />} />
+        <Route path="/edit-post/:postId" element={<EditPostForm />} />
+        <Route path="/create-post" element={<CreatePostForm />} />
 
         {/* User Routes (Authenticated Users Only) */}
         <Route
@@ -85,7 +85,7 @@ const App = () => {
         <Route
           path="/user-management"
           element={
-            <PrivateRoute allowedRoles={["admin","super_admin"]}>
+            <PrivateRoute allowedRoles={["admin", "super_admin"]}>
               <UserManagementPage />
             </PrivateRoute>
           }
@@ -93,7 +93,7 @@ const App = () => {
         <Route
           path="/messages"
           element={
-            <PrivateRoute allowedRoles={["admin","super_admin"]}>
+            <PrivateRoute allowedRoles={["admin", "super_admin"]}>
               <MessageManagementPage />
             </PrivateRoute>
           }

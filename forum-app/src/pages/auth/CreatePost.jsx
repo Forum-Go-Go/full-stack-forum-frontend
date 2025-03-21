@@ -1,49 +1,43 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 const CreatePostForm = () => {
-  // State to manage form fields
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+
   const [status, setStatus] = useState("Unpublished"); // Default status is 'Unpublished'
   const [images, setImages] = useState([]);  // allow user to upload multiple images
   const [attachments, setAttachments] = useState([]); // State for multiple attachments
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Initialize navigate hook
   const navigate = useNavigate();
 
-  // Handle form input changes
   const handleTitleChange = (e) => setTitle(e.target.value);
   const handleContentChange = (e) => setContent(e.target.value);
   const handleStatusChange = (e) => setStatus(e.target.value);
 
-  // Handle image upload
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     setImages((prev) => [...prev, ...files]);
   };
 
-  // Handle attachments upload (multiple files)
   const handleAttachmentsChange = (e) => {
     const files = Array.from(e.target.files);
     setAttachments((prev) => [...prev, ...files]); // Append new files to the list
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent page reload on form submit
     setLoading(true); // Start loading state
-
-    console.log("Selected status:", status); // Debugging: check the selected status
 
     try {
       const formData = new FormData();
       formData.append("title", title);
       formData.append("content", content);
-      formData.append("status", status); // Pass the status as selected
+      formData.append("status", status);
 
       // Append multiple images
       images.forEach((image) => {
@@ -52,7 +46,6 @@ const CreatePostForm = () => {
 
       console.log("FormData images:", formData.getAll("images"));
 
-      // Append multiple attachments
       attachments.forEach((attachment, index) => {
         formData.append(`attachments[${index}]`, attachment);
       });
@@ -70,15 +63,10 @@ const CreatePostForm = () => {
         }
       );
 
-      console.log("Post created successfully:", response.data);
-
-      // Show success alert
       alert("Post has been created successfully!");
 
-      // Redirect to user-posts page (or wherever you want to navigate)
-      navigate("/user-posts"); // Update this path if necessary
+      navigate("/user-posts");
 
-      // Optionally reset form or show success message
       setTitle("");
       setContent("");
       setStatus("Unpublished");
@@ -88,20 +76,28 @@ const CreatePostForm = () => {
       setError("Error creating post. Please try again.");
       console.error(err);
     } finally {
-      setLoading(false); // End loading state
+      setLoading(false);
     }
   };
+
+  let verified = false;
+  try {
+    const token = localStorage.getItem("token");
+    if (token) {
+      verified = jwtDecode(token).verified;
+    }
+  } catch (error) {
+    console.error("Invalid or expired token:", error);
+    localStorage.removeItem("token");
+  }
 
   return (
     <div className="flex flex-col items-center mt-16 p-6">
       <h2 className="text-3xl font-bold mb-6 font-lato">Create a New Post</h2>
-
-      {/* Form */}
       <form
         onSubmit={handleSubmit}
         className="flex flex-col w-full max-w-lg space-y-4"
       >
-        {/* Title */}
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Title
@@ -114,8 +110,6 @@ const CreatePostForm = () => {
             className="mt-1 px-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-
-        {/* Content */}
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Content
@@ -128,8 +122,6 @@ const CreatePostForm = () => {
             className="mt-1 px-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-
-        {/* Status */}
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Status
@@ -143,8 +135,6 @@ const CreatePostForm = () => {
             <option value="Published">Published</option>
           </select>
         </div>
-
-        {/* Image upload */}
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Post Image
@@ -158,8 +148,6 @@ const CreatePostForm = () => {
             className="mt-1 w-full text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-
-        {/* Attachments upload */}
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Attachments
@@ -171,20 +159,22 @@ const CreatePostForm = () => {
             className="mt-1 w-full text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-
-        {/* Submit Button */}
-        <button
-          type="submit"
-          disabled={loading}
-          className={`px-6 py-2 mt-4 rounded-md text-white ${
-            loading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
-          } focus:outline-none`}
-        >
-          {loading ? "Creating Post..." : "Create Post"}
-        </button>
+        {verified ? (
+          <button
+            type="submit"
+            disabled={loading}
+            className={`px-6 py-2 mt-4 rounded-md text-white ${
+              loading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
+            } focus:outline-none`}
+          >
+            {loading ? "Creating Post..." : "Create Post"}
+          </button>
+        ) : (
+          <p className="mt-4 text-red-500">
+            You must be verified in order to create a post.
+          </p>
+        )}
       </form>
-
-      {/* Error message */}
       {error && <p className="mt-4 text-red-500">{error}</p>}
     </div>
   );

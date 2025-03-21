@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { fetchUser } from "../../redux/slices/userSlice.js";
 import { useDispatch, useSelector } from "react-redux";
 import { FiDownload } from "react-icons/fi";
+import { jwtDecode } from "jwt-decode";
 
 const PostDetailPage = () => {
   const { postId } = useParams();
@@ -46,7 +47,6 @@ const PostDetailPage = () => {
                 },
               }
             );
-            console.log("Reply response:", userResponse.data.reply);
 
             const userName = `${userResponse.data.user.firstName} ${userResponse.data.user.lastName}`;
             const userProfileImageURL = userResponse.data.user.profileImageURL;
@@ -176,6 +176,18 @@ const PostDetailPage = () => {
   const isPostHidden = post.status === "Hidden";
   const isPostBanned = post.status === "Banned";
 
+  //Check if user is verified (in order to reply to posts)
+  let verified = false;
+  try {
+    const token = localStorage.getItem("token");
+    if (token) {
+      verified = jwtDecode(token).verified;
+    }
+  } catch (error) {
+    console.error("Invalid or expired token:", error);
+    localStorage.removeItem("token");
+  }
+
   const default_image =
     "https://fa-forum-user-profile-bucket.s3.us-east-1.amazonaws.com/profile_images/default_user.png";
 
@@ -302,7 +314,18 @@ const PostDetailPage = () => {
           </div>
 
           {/* Add Reply Form */}
-          {isPostBanned || isPostDeleted || isPostHidden || post.isArchived ? (
+          {verified ? (
+            <></>
+          ) : (
+            <p className="text-red-500">
+              You must be verified in order to reply.
+            </p>
+          )}
+          {isPostBanned ||
+          isPostDeleted ||
+          isPostHidden ||
+          post.isArchived ||
+          !verified ? (
             <p className="text-red-500">
               This post has been {post.isArchived ? "Archived" : post.status}.
             </p>
