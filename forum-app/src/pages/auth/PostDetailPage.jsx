@@ -22,11 +22,11 @@ const PostDetailPage = () => {
       const response = await axios.get(
         `http://127.0.0.1:5003/replies/post/${postId}`
       );
-      let newReplies = response.data.filter((reply) => reply.reply.isActive);
+      console.log(response.data);
 
-      if (!Array.isArray(newReplies)) {
-        newReplies = []; // Default to an empty array if it's not an array
-      }
+      let newReplies = Array.isArray(response.data)
+        ? response.data.filter((reply) => reply.reply.isActive)
+        : [];
 
       // Fetch user data for each reply and attach to reply object
       const enrichedReplies = await Promise.all(
@@ -265,7 +265,9 @@ const PostDetailPage = () => {
 
         {/* Add Reply Form */}
         {isPostDeleted || isPostBanned || post.isArchived ? (
-          <p className="text-red-500">This post has been {post.isArchived ? "Archived" : post.status}.</p>
+          <p className="text-red-500">
+            This post has been {post.isArchived ? "Archived" : post.status}.
+          </p>
         ) : (
           <div className="mt-6">
             <h3 className="text-xl font-semibold mb-3 text-gray-800">
