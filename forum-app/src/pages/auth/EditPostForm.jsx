@@ -127,6 +127,26 @@ const EditPostForm = () => {
                   <option value="Published">Published</option>
                 </select>
               )}
+              {status === "Published" && (
+                <select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                  className="mt-1 px-4 py-2 w-full border rounded-md"
+                >
+                  <option value="Published">Published</option>
+                  <option value="Hidden">Hide Post</option>
+                </select>
+              )}
+              {status === "Hidden" && (
+                <select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                  className="mt-1 px-4 py-2 w-full border rounded-md"
+                >
+                  <option value="Hidden">Hide Post</option>
+                  <option value="Published">Published</option>
+                </select>
+              )}
             </div>
             <button
               type="submit"
