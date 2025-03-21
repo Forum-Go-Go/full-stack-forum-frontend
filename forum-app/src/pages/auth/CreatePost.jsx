@@ -7,7 +7,7 @@ const CreatePostForm = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [status, setStatus] = useState("Unpublished"); // Default status is 'Unpublished'
-  const [image, setImage] = useState(null); // State for image upload
+  const [images, setImages] = useState([]);  // allow user to upload multiple images
   const [attachments, setAttachments] = useState([]); // State for multiple attachments
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -22,28 +22,20 @@ const CreatePostForm = () => {
 
   // Handle image upload
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setImage(file);
+    const files = Array.from(e.target.files);
+    setImages((prev) => [...prev, ...files]);
   };
 
   // Handle attachments upload (multiple files)
   const handleAttachmentsChange = (e) => {
     const files = Array.from(e.target.files);
-    setAttachments(files);
+    setAttachments((prev) => [...prev, ...files]); // Append new files to the list
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent page reload on form submit
     setLoading(true); // Start loading state
-
-    // const newPost = {
-    //   title,
-    //   content,
-    //   status,
-    //   image, // Add the image file
-    //   attachments, // Add attachments files
-    // };
 
     console.log("Selected status:", status); // Debugging: check the selected status
 
@@ -53,14 +45,19 @@ const CreatePostForm = () => {
       formData.append("content", content);
       formData.append("status", status); // Pass the status as selected
 
-      if (image) {
-        formData.append("image", image); // Add image file to FormData
-      }
+      // Append multiple images
+      images.forEach((image) => {
+        formData.append("images", image); 
+      });
 
-      // Add attachments to FormData
+      console.log("FormData images:", formData.getAll("images"));
+
+      // Append multiple attachments
       attachments.forEach((attachment, index) => {
         formData.append(`attachments[${index}]`, attachment);
       });
+
+      console.log("FormData images:", formData.getAll("images"));
 
       const response = await axios.post(
         "http://127.0.0.1:5009/posts",
@@ -85,7 +82,7 @@ const CreatePostForm = () => {
       setTitle("");
       setContent("");
       setStatus("Unpublished");
-      setImage(null);
+      setImages([]);
       setAttachments([]);
     } catch (err) {
       setError("Error creating post. Please try again.");
@@ -155,6 +152,8 @@ const CreatePostForm = () => {
           <input
             type="file"
             accept="image/*"
+            name="images"
+            multiple  // allow multiple images
             onChange={handleImageChange}
             className="mt-1 w-full text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -167,7 +166,7 @@ const CreatePostForm = () => {
           </label>
           <input
             type="file"
-            multiple
+            multiple  // allow multiple files
             onChange={handleAttachmentsChange}
             className="mt-1 w-full text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
