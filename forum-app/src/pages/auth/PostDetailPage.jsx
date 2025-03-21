@@ -23,8 +23,6 @@ const PostDetailPage = () => {
         `http://127.0.0.1:5003/replies/post/${postId}`
       );
       let newReplies = response.data.filter((reply) => reply.reply.isActive);
-      console.log(response.data, "here");
-      console.log(newReplies, "newReplies");
 
       if (!Array.isArray(newReplies)) {
         newReplies = []; // Default to an empty array if it's not an array
