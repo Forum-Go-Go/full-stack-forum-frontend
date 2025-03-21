@@ -6,7 +6,7 @@ export const sendMessage = createAsyncThunk(
   async (messageData, { rejectWithValue }) => {
     try {
       const response = await fetch('http://127.0.0.1:5009/messages', {
-        // ✅ Use Gateway
+        // Use Gateway
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(messageData)

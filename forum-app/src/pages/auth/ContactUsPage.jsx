@@ -8,7 +8,7 @@ const ContactUsPage = () => {
     message: "",
   });
 
-  const [showModal, setShowModal] = useState(false); // ✅ Track modal visibility
+  const [showModal, setShowModal] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -27,7 +27,7 @@ const ContactUsPage = () => {
 
       const data = await response.json();
       if (response.ok) {
-        setShowModal(true); // ✅ Show the modal popup
+        setShowModal(true);
       } else {
         alert(`Error: ${data.error}`);
       }
@@ -36,15 +36,14 @@ const ContactUsPage = () => {
     }
   };
 
-  // ✅ Close modal and clear form
   const closeModal = () => {
     setShowModal(false);
-    setFormData({ name: "", email: "", subject: "", message: "" }); // ✅ Clear form
+    setFormData({ name: "", email: "", subject: "", message: "" });
   };
 
   return (
     <div className="p-6 max-w-lg mx-auto mt-20">
-      <h2 className="font-playfair text-3xl text-blue-500">Contact Us</h2>
+      <h2 className="font-lato text-3xl text-blue-500">Contact Us</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
@@ -89,7 +88,7 @@ const ContactUsPage = () => {
         </button>
       </form>
 
-      {/* ✅ Modal Popup */}
+      {/* Modal Popup */}
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-lg max-w-sm">

@@ -5,7 +5,7 @@ const MessageManagementPage = () => {
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true); // Track if more messages exist
 
-  // ✅ Fetch messages from API Gateway
+  // Fetch messages from API Gateway
   const fetchMessages = async () => {
     setLoading(true);
     try {
@@ -15,10 +15,10 @@ const MessageManagementPage = () => {
 
       const data = await response.json();
       if (response.ok) {
-        // ✅ Filter pending messages and sort by newest
+        // Filter pending messages and sort by newest
         const pendingMessages = data
           .filter((msg) => msg.status === "pending")
-          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
         setMessages(pendingMessages.slice(0, 10)); // Show only 10 initially
         setHasMore(pendingMessages.length > 10); // Check if more exist
@@ -36,7 +36,7 @@ const MessageManagementPage = () => {
     fetchMessages();
   }, []);
 
-  // ✅ Handle status update (PUT /messages/{id}/status)
+  // Handle status update (PUT /messages/{id}/status)
   const updateStatus = async (id, newStatus) => {
     try {
       const response = await fetch(
