@@ -53,7 +53,6 @@ const UserProfilePage = () => {
         }
       );
 
-      console.log("Fetched user data:", response.data.user);
       setUserProfile(response.data.user);
       setLoading(false);
     } catch (err) {

@@ -39,7 +39,6 @@ const PostDetailPage = () => {
                 },
               }
             );
-            console.log("Reply response:", userResponse.data.reply);
 
             const userName = `${userResponse.data.user.firstName} ${userResponse.data.user.lastName}`;
             const userProfileImageURL = userResponse.data.user.profileImageURL;

@@ -4,61 +4,44 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
 const CreatePostForm = () => {
-  // State to manage form fields
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [status, setStatus] = useState("Unpublished"); // Default status is 'Unpublished'
-  const [image, setImage] = useState(null); // State for image upload
-  const [attachments, setAttachments] = useState([]); // State for multiple attachments
+  const [status, setStatus] = useState("Unpublished");
+  const [image, setImage] = useState(null);
+  const [attachments, setAttachments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Initialize navigate hook
   const navigate = useNavigate();
 
-  // Handle form input changes
   const handleTitleChange = (e) => setTitle(e.target.value);
   const handleContentChange = (e) => setContent(e.target.value);
   const handleStatusChange = (e) => setStatus(e.target.value);
 
-  // Handle image upload
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setImage(file);
   };
 
-  // Handle attachments upload (multiple files)
   const handleAttachmentsChange = (e) => {
     const files = Array.from(e.target.files);
     setAttachments(files);
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent page reload on form submit
-    setLoading(true); // Start loading state
-
-    // const newPost = {
-    //   title,
-    //   content,
-    //   status,
-    //   image, // Add the image file
-    //   attachments, // Add attachments files
-    // };
-
-    console.log("Selected status:", status); // Debugging: check the selected status
+    e.preventDefault();
+    setLoading(true);
 
     try {
       const formData = new FormData();
       formData.append("title", title);
       formData.append("content", content);
-      formData.append("status", status); // Pass the status as selected
+      formData.append("status", status);
 
       if (image) {
-        formData.append("image", image); // Add image file to FormData
+        formData.append("image", image);
       }
 
-      // Add attachments to FormData
       attachments.forEach((attachment, index) => {
         formData.append(`attachments[${index}]`, attachment);
       });
@@ -74,13 +57,10 @@ const CreatePostForm = () => {
         }
       );
 
-      // Show success alert
       alert("Post has been created successfully!");
 
-      // Redirect to user-posts page (or wherever you want to navigate)
-      navigate("/user-posts"); // Update this path if necessary
+      navigate("/user-posts");
 
-      // Optionally reset form or show success message
       setTitle("");
       setContent("");
       setStatus("Unpublished");
@@ -90,7 +70,7 @@ const CreatePostForm = () => {
       setError("Error creating post. Please try again.");
       console.error(err);
     } finally {
-      setLoading(false); // End loading state
+      setLoading(false);
     }
   };
 
@@ -102,19 +82,16 @@ const CreatePostForm = () => {
     }
   } catch (error) {
     console.error("Invalid or expired token:", error);
-    localStorage.removeItem("token"); // Optional: Remove invalid token
+    localStorage.removeItem("token");
   }
 
   return (
     <div className="flex flex-col items-center mt-16 p-6">
       <h2 className="text-3xl font-bold mb-6 font-lato">Create a New Post</h2>
-
-      {/* Form */}
       <form
         onSubmit={handleSubmit}
         className="flex flex-col w-full max-w-lg space-y-4"
       >
-        {/* Title */}
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Title
@@ -127,8 +104,6 @@ const CreatePostForm = () => {
             className="mt-1 px-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-
-        {/* Content */}
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Content
@@ -141,8 +116,6 @@ const CreatePostForm = () => {
             className="mt-1 px-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-
-        {/* Status */}
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Status
@@ -156,8 +129,6 @@ const CreatePostForm = () => {
             <option value="Published">Published</option>
           </select>
         </div>
-
-        {/* Image upload */}
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Post Image
@@ -169,8 +140,6 @@ const CreatePostForm = () => {
             className="mt-1 w-full text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-
-        {/* Attachments upload */}
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Attachments
@@ -182,8 +151,6 @@ const CreatePostForm = () => {
             className="mt-1 w-full text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-
-        {/* Submit Button */}
         {verified ? (
           <button
             type="submit"
@@ -200,8 +167,6 @@ const CreatePostForm = () => {
           </p>
         )}
       </form>
-
-      {/* Error message */}
       {error && <p className="mt-4 text-red-500">{error}</p>}
     </div>
   );

@@ -6,17 +6,22 @@ import * as Yup from "yup";
 const registerSchema = Yup.object().shape({
   firstName: Yup.string().required("First name is required"),
   lastName: Yup.string().required("Last name is required"),
-  email: Yup.string().email("Invalid email format").required("Email is required"),
+  email: Yup.string()
+    .email("Invalid email format")
+    .required("Email is required"),
   password: Yup.string()
     .min(8, "Password must be at least 8 characters")
     .matches(/[a-z]/, "Must include a lowercase letter")
     .matches(/[A-Z]/, "Must include an uppercase letter")
     .matches(/[0-9]/, "Must include a number")
-    .matches(/[@$!%*?&]/, "Must include a special character (@, $, !, %, *, ?, &)")
+    .matches(
+      /[@$!%*?&]/,
+      "Must include a special character (@, $, !, %, *, ?, &)"
+    )
     .required("Password is required"),
   confirmPassword: Yup.string()
-    .oneOf([Yup.ref('password')], "Passwords must match")
-    .required("Please confirm your password")
+    .oneOf([Yup.ref("password")], "Passwords must match")
+    .required("Please confirm your password"),
 });
 
 const RegisterPage = () => {
@@ -32,14 +37,12 @@ const RegisterPage = () => {
       type: "user",
     };
 
-    console.log("Submitting registration data:", JSON.stringify(requestData));
-
     try {
       const response = await fetch("http://127.0.0.1:5009/users/register", {
         method: "POST",
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
-          "Accept": "application/json",
+          Accept: "application/json",
         },
         body: JSON.stringify(requestData),
       });
@@ -50,13 +53,16 @@ const RegisterPage = () => {
         throw new Error(data.message || data.error || "Registration failed");
       }
 
-      setStatus({ success: "✅ Registration successful! Redirecting to login..." });
+      setStatus({
+        success: "✅ Registration successful! Redirecting to login...",
+      });
 
       // Redirect to login page after 2 seconds
       setTimeout(() => {
-        navigate("/users/login", { state: { email: values.email, password: values.password } });
+        navigate("/users/login", {
+          state: { email: values.email, password: values.password },
+        });
       }, 2000);
-
     } catch (err) {
       console.error("Registration Error:", err.message);
       setStatus({ error: err.message });
@@ -68,7 +74,9 @@ const RegisterPage = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-lg w-96">
-        <h2 className="text-3xl font-bold text-center text-blue-600 mb-6">Sign Up</h2>
+        <h2 className="text-3xl font-bold text-center text-blue-600 mb-6">
+          Sign Up
+        </h2>
 
         {/* Formik form wrapper */}
         <Formik
@@ -85,8 +93,14 @@ const RegisterPage = () => {
           {({ isSubmitting, status }) => (
             <Form className="space-y-4">
               {/* Display error or success messages */}
-              {status?.error && <p className="text-red-500 text-center mb-4">{status.error}</p>}
-              {status?.success && <p className="text-green-500 text-center mb-4">{status.success}</p>}
+              {status?.error && (
+                <p className="text-red-500 text-center mb-4">{status.error}</p>
+              )}
+              {status?.success && (
+                <p className="text-green-500 text-center mb-4">
+                  {status.success}
+                </p>
+              )}
 
               {/* First Name Input */}
               <div>
@@ -96,7 +110,11 @@ const RegisterPage = () => {
                   placeholder="First Name"
                   className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
-                <ErrorMessage name="firstName" component="div" className="text-red-500 text-sm mt-1" />
+                <ErrorMessage
+                  name="firstName"
+                  component="div"
+                  className="text-red-500 text-sm mt-1"
+                />
               </div>
 
               {/* Last Name Input */}
@@ -107,7 +125,11 @@ const RegisterPage = () => {
                   placeholder="Last Name"
                   className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
-                <ErrorMessage name="lastName" component="div" className="text-red-500 text-sm mt-1" />
+                <ErrorMessage
+                  name="lastName"
+                  component="div"
+                  className="text-red-500 text-sm mt-1"
+                />
               </div>
 
               {/* Email Input */}
@@ -118,7 +140,11 @@ const RegisterPage = () => {
                   placeholder="Email"
                   className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
-                <ErrorMessage name="email" component="div" className="text-red-500 text-sm mt-1" />
+                <ErrorMessage
+                  name="email"
+                  component="div"
+                  className="text-red-500 text-sm mt-1"
+                />
               </div>
 
               {/* Password Input */}
@@ -129,7 +155,11 @@ const RegisterPage = () => {
                   placeholder="Password"
                   className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
-                <ErrorMessage name="password" component="div" className="text-red-500 text-sm mt-1" />
+                <ErrorMessage
+                  name="password"
+                  component="div"
+                  className="text-red-500 text-sm mt-1"
+                />
               </div>
 
               {/* Confirm Password Input */}
@@ -140,7 +170,11 @@ const RegisterPage = () => {
                   placeholder="Confirm Password"
                   className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
-                <ErrorMessage name="confirmPassword" component="div" className="text-red-500 text-sm mt-1" />
+                <ErrorMessage
+                  name="confirmPassword"
+                  component="div"
+                  className="text-red-500 text-sm mt-1"
+                />
               </div>
 
               {/* Submit Button */}
