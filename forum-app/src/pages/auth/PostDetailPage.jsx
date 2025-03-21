@@ -22,8 +22,9 @@ const PostDetailPage = () => {
       const response = await axios.get(
         `http://127.0.0.1:5003/replies/post/${postId}`
       );
-      let newReplies = response.data;
-      console.log(response.data);
+      let newReplies = response.data.filter((reply) => reply.reply.isActive);
+      console.log(response.data, "here");
+      console.log(newReplies, "newReplies");
 
       if (!Array.isArray(newReplies)) {
         newReplies = []; // Default to an empty array if it's not an array
@@ -44,11 +45,11 @@ const PostDetailPage = () => {
             console.log("Reply response:", userResponse.data.reply);
 
             const userName = `${userResponse.data.user.firstName} ${userResponse.data.user.lastName}`;
-            const userProfileImageURL = userResponse.data.user.profileImageURL
+            const userProfileImageURL = userResponse.data.user.profileImageURL;
             return {
               ...reply,
               userName,
-              userProfileImageURL
+              userProfileImageURL,
             };
           } catch (userErr) {
             console.error(
@@ -75,7 +76,9 @@ const PostDetailPage = () => {
         const response = await axios.get(
           `http://127.0.0.1:5009/posts/${postId}`,
           {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` },
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
           }
         );
         const new_post = response.data.post;
@@ -140,6 +143,7 @@ const PostDetailPage = () => {
     try {
       await axios.put(
         `http://127.0.0.1:5009/replies/delete/${replyId}`,
+        {},
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -166,13 +170,16 @@ const PostDetailPage = () => {
   const isPostDeleted = post.status === "Deleted";
   const isPostBanned = post.status === "Banned";
 
-  const default_image = "https://fa-forum-user-profile-bucket.s3.us-east-1.amazonaws.com/profile_images/default_user.png"
+  const default_image =
+    "https://fa-forum-user-profile-bucket.s3.us-east-1.amazonaws.com/profile_images/default_user.png";
 
   return (
     <div className="flex flex-col items-center mt-16 p-8">
       <div className="w-full max-w-3xl bg-white shadow-2xl rounded-xl p-8 border-2 border-gray-200">
-        <h2 className="text-3xl font-bold mb-4 text-gray-800">Title: {post.title}</h2>
-        
+        <h2 className="text-3xl font-bold mb-4 text-gray-800">
+          Title: {post.title}
+        </h2>
+
         {/* Author Info */}
         <div className="flex items-center gap-4 mb-6 border-b pb-4">
           <img
@@ -184,18 +191,20 @@ const PostDetailPage = () => {
             Author: {user.firstName} {user.lastName}
           </p>
         </div>
-  
+
         {/* Post Details */}
-        <p className="text-gray-500 text-sm mb-4">Created on: {post.dateCreated}</p>
+        <p className="text-gray-500 text-sm mb-4">
+          Created on: {post.dateCreated}
+        </p>
         <p className="text-gray-600 mb-4">
           <span className="font-semibold">Status:</span> {post.status}
         </p>
-  
+
         {/* Post Content */}
         <div className="prose max-w-none text-gray-800 mb-6">
           Content: {post.content}
         </div>
-  
+
         {/* Post Image */}
         {post.images && (
           <div className="mb-6">
@@ -209,7 +218,7 @@ const PostDetailPage = () => {
             </div>
           </div>
         )}
-  
+
         {/* Replies Section with Scroll */}
         <div className="mt-6 border-t pt-6">
           <h3 className="text-2xl font-semibold mb-4 text-gray-800">Replies</h3>
@@ -224,13 +233,20 @@ const PostDetailPage = () => {
                         alt="Author"
                         className="w-16 h-16 rounded-full object-cover border-2 border-gray-300 shadow-lg"
                       />
-                      <p className="text-gray-700 font-medium text-lg">{reply.userName}</p>
+                      <p className="text-gray-700 font-medium text-lg">
+                        {reply.userName}
+                      </p>
                     </div>
-                    <p className="font-semibold text-gray-700">Reply: {reply.reply.comment}</p>
-                    <p className="text-gray-500 text-sm">Posted on: {reply.reply.dateCreated}</p>
-  
+                    <p className="font-semibold text-gray-700">
+                      Reply: {reply.reply.comment}
+                    </p>
+                    <p className="text-gray-500 text-sm">
+                      Posted on: {reply.reply.dateCreated}
+                    </p>
+
                     {/* Delete Button for Reply Author */}
-                    {JSON.parse(localStorage.getItem("user")).id === reply.reply.userId && (
+                    {JSON.parse(localStorage.getItem("user")).id ===
+                      reply.reply.userId && (
                       <button
                         onClick={() => handleDeleteReply(reply.reply.replyId)}
                         className="text-red-500 hover:text-red-700 text-sm mt-2"
@@ -242,17 +258,21 @@ const PostDetailPage = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-gray-500">No replies yet. Be the first to reply!</p>
+              <p className="text-gray-500">
+                No replies yet. Be the first to reply!
+              </p>
             )}
           </div>
         </div>
-  
+
         {/* Add Reply Form */}
         {isPostDeleted || isPostBanned ? (
           <p className="text-red-500">This post has been {post.status}.</p>
         ) : (
           <div className="mt-6">
-            <h3 className="text-xl font-semibold mb-3 text-gray-800">Add a Reply</h3>
+            <h3 className="text-xl font-semibold mb-3 text-gray-800">
+              Add a Reply
+            </h3>
             {isPostUnpublished ? (
               <p className="text-red-500">
                 Replies are disabled for unpublished posts.
@@ -273,7 +293,9 @@ const PostDetailPage = () => {
                   type="submit"
                   disabled={replyLoading || isPostUnpublished}
                   className={`px-6 py-2 bg-blue-600 text-white rounded-md shadow-lg ${
-                    replyLoading || isPostUnpublished ? "bg-gray-400" : "hover:bg-blue-700"
+                    replyLoading || isPostUnpublished
+                      ? "bg-gray-400"
+                      : "hover:bg-blue-700"
                   }`}
                 >
                   {replyLoading ? "Posting Reply..." : "Post Reply"}
@@ -282,7 +304,7 @@ const PostDetailPage = () => {
             )}
           </div>
         )}
-  
+
         {/* Back Button */}
         <div className="flex gap-4 mt-6">
           <button
@@ -295,7 +317,6 @@ const PostDetailPage = () => {
       </div>
     </div>
   );
-  
 };
 
 export default PostDetailPage;
