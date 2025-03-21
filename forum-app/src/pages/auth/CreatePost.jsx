@@ -64,6 +64,7 @@ const CreatePostForm = () => {
       );
 
       alert("Post has been created successfully!");
+      console.log(response);
 
       navigate("/user-posts");
 
