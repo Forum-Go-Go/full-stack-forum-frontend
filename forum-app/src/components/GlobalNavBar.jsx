@@ -7,7 +7,7 @@ import { logout } from "../redux/slices/authSlice";
 const GlobalNavBar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  
+
   // ✅ Get user & token from Redux store
   const { user, token, isAuthenticated } = useSelector((state) => state.auth);
 
@@ -56,11 +56,11 @@ const GlobalNavBar = () => {
   // ✅ Navigation items based on role
   const normalUserNav = [
     { path: "/home", label: "Home" },
-    { path: "/create-post", label: "Create New Post"},
+    { path: "/create-post", label: "Create New Post" },
     { path: "/user-posts", label: "My Posts" },
-    { path: "/history", label: "History Management"},
+    { path: "/history", label: "History Management" },
     { path: "/profile", label: "User Profile" },
-    { path: "/contactus", label: "Contact Us"}
+    { path: "/contactus", label: "Contact Us" },
   ];
 
   const adminNav = [
@@ -74,8 +74,9 @@ const GlobalNavBar = () => {
   const superAdminNav = [
     { path: "/home", label: "Home" },
     { path: "/user-posts", label: "My Posts" },
-    { path: "/messages", label: "Messages Management" },
     { path: "/user-management", label: "User Management" },
+    { path: "/messages", label: "Messages Management" },
+    { path: "/profile", label: "User Profile" },
   ];
 
   // ✅ Determine navigation items based on role
@@ -95,7 +96,10 @@ const GlobalNavBar = () => {
     <nav className="fixed top-0 left-0 w-full z-50 bg-indigo-600 p-4 text-white shadow-lg">
       <div className="container mx-auto flex justify-between items-center">
         {/* Left Side: App Name */}
-        <Link to="/home" className="text-3xl font-semibold hover:text-indigo-300 transition duration-200">
+        <Link
+          to="/home"
+          className="text-3xl font-semibold hover:text-indigo-300 transition duration-200"
+        >
           Forum
         </Link>
 
@@ -103,7 +107,10 @@ const GlobalNavBar = () => {
         <ul className="flex space-x-6">
           {navItems.map((item) => (
             <li key={item.path}>
-              <Link to={item.path} className="hover:text-indigo-300 transition duration-200">
+              <Link
+                to={item.path}
+                className="hover:text-indigo-300 transition duration-200"
+              >
                 {item.label}
               </Link>
             </li>
@@ -114,8 +121,12 @@ const GlobalNavBar = () => {
         <div className="flex items-center space-x-5">
           {/* ✅ Display user email, role, and verification status */}
           <span className="text-sm font-medium">
-            {userData?.email} ({userData?.role}) - 
-            {userData?.verified ? <span className="text-green-400"> Verified ✅</span> : <span className="text-red-400"> Not Verified ❌</span>}
+            {userData?.email} ({userData?.role}) -
+            {userData?.verified ? (
+              <span className="text-green-400"> Verified ✅</span>
+            ) : (
+              <span className="text-red-400"> Not Verified ❌</span>
+            )}
           </span>
 
           {/* ✅ Logout Button */}
