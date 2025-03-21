@@ -264,8 +264,8 @@ const PostDetailPage = () => {
         </div>
 
         {/* Add Reply Form */}
-        {isPostDeleted || isPostBanned ? (
-          <p className="text-red-500">This post has been {post.status}.</p>
+        {isPostDeleted || isPostBanned || post.isArchived ? (
+          <p className="text-red-500">This post has been {post.isArchived ? "Archived" : post.status}.</p>
         ) : (
           <div className="mt-6">
             <h3 className="text-xl font-semibold mb-3 text-gray-800">
