@@ -167,12 +167,20 @@ const PostDetailPage = () => {
   const isPostUnpublished = post.status === "Unpublished";
   const isPostDeleted = post.status === "Deleted";
   const isPostHidden = post.status === "Hidden";
+  const isPostHidden = post.status === "Hidden";
   const isPostBanned = post.status === "Banned";
 
   const default_image =
     "https://fa-forum-user-profile-bucket.s3.us-east-1.amazonaws.com/profile_images/default_user.png";
 
   return (
+    <>
+    { !isPostBanned && !isPostDeleted && !isPostHidden ?
+      (<div className="flex flex-col items-center mt-16 p-8">
+        <div className="w-full max-w-3xl bg-white shadow-2xl rounded-xl p-8 border-2 border-gray-200">
+          <h2 className="text-3xl font-bold mb-4 text-gray-800">
+            Title: {post.title}
+          </h2>
     <>
     { !isPostBanned && !isPostDeleted && !isPostHidden ?
       (<div className="flex flex-col items-center mt-16 p-8">
@@ -192,7 +200,25 @@ const PostDetailPage = () => {
               Author: {user.firstName} {user.lastName}
             </p>
           </div>
+          {/* Author Info */}
+          <div className="flex items-center gap-4 mb-6 border-b pb-4">
+            <img
+              src={user.profileImageURL || default_image}
+              alt="Author"
+              className="w-16 h-16 rounded-full object-cover border-2 border-gray-300 shadow-lg"
+            />
+            <p className="text-gray-700 font-medium text-lg">
+              Author: {user.firstName} {user.lastName}
+            </p>
+          </div>
 
+          {/* Post Details */}
+          <p className="text-gray-500 text-sm mb-4">
+            Created on: {post.dateCreated}
+          </p>
+          <p className="text-gray-600 mb-4">
+            <span className="font-semibold">Status:</span> {post.status}
+          </p>
           {/* Post Details */}
           <p className="text-gray-500 text-sm mb-4">
             Created on: {post.dateCreated}
@@ -205,7 +231,24 @@ const PostDetailPage = () => {
           <div className="prose max-w-none text-gray-800 mb-6">
             Content: {post.content}
           </div>
+          {/* Post Content */}
+          <div className="prose max-w-none text-gray-800 mb-6">
+            Content: {post.content}
+          </div>
 
+          {/* Post Image */}
+          {post.images && (
+            <div className="mb-6">
+              <h3 className="text-xl font-semibold mb-3">Image</h3>
+              <div className="flex justify-center">
+                <img
+                  src={post.images}
+                  alt="Post image"
+                  className="rounded-lg shadow-xl hover:scale-105 transition-transform duration-300 max-h-[400px] object-contain"
+                />
+              </div>
+            </div>
+          )}
           {/* Post Image */}
           {post.images && (
             <div className="mb-6">
@@ -244,7 +287,51 @@ const PostDetailPage = () => {
                       <p className="text-gray-500 text-sm">
                         Posted on: {reply.reply.dateCreated}
                       </p>
+          {/* Replies Section with Scroll */}
+          <div className="mt-6 border-t pt-6">
+            <h3 className="text-2xl font-semibold mb-4 text-gray-800">Replies</h3>
+            <div className="max-h-[400px] overflow-y-auto border p-4 rounded-lg bg-gray-50 shadow-inner">
+              {replies && replies.length > 0 ? (
+                <div>
+                  {replies.map((reply) => (
+                    <div key={reply.reply.replyId} className="border-b pb-4 mb-4">
+                      <div className="flex items-center gap-4 mb-4">
+                        <img
+                          src={reply.userProfileImageURL || default_image}
+                          alt="Author"
+                          className="w-16 h-16 rounded-full object-cover border-2 border-gray-300 shadow-lg"
+                        />
+                        <p className="text-gray-700 font-medium text-lg">
+                          {reply.userName}
+                        </p>
+                      </div>
+                      <p className="font-semibold text-gray-700">
+                        Reply: {reply.reply.comment}
+                      </p>
+                      <p className="text-gray-500 text-sm">
+                        Posted on: {reply.reply.dateCreated}
+                      </p>
 
+                      {/* Delete Button for Reply Author */}
+                      {JSON.parse(localStorage.getItem("user")).id ===
+                        reply.reply.userId && (
+                        <button
+                          onClick={() => handleDeleteReply(reply.reply.replyId)}
+                          className="text-red-500 hover:text-red-700 text-sm mt-2"
+                        >
+                          Delete
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500">
+                  No replies yet. Be the first to reply!
+                </p>
+              )}
+            </div>
+          </div>
                       {/* Delete Button for Reply Author */}
                       {JSON.parse(localStorage.getItem("user")).id ===
                         reply.reply.userId && (
@@ -305,7 +392,66 @@ const PostDetailPage = () => {
               )}
             </div>
           )}
+          {/* Add Reply Form */}
+          { post.isArchived ? (
+            <p className="text-red-500">This post has been {post.isArchived ? "Archived" : post.status}.</p>
+          ) : (
+            <div className="mt-6">
+              <h3 className="text-xl font-semibold mb-3 text-gray-800">
+                Add a Reply
+              </h3>
+              {isPostUnpublished ? (
+                <p className="text-red-500">
+                  Replies are disabled for unpublished posts.
+                </p>
+              ) : (
+                <form
+                  onSubmit={handleReplySubmit}
+                  className="flex flex-col space-y-4"
+                >
+                  <textarea
+                    value={newReply}
+                    onChange={handleReplyChange}
+                    placeholder="Write your reply..."
+                    className="border-2 rounded-md p-3 w-full shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows="4"
+                  />
+                  <button
+                    type="submit"
+                    disabled={replyLoading || isPostUnpublished}
+                    className={`px-6 py-2 bg-blue-600 text-white rounded-md shadow-lg ${
+                      replyLoading || isPostUnpublished
+                        ? "bg-gray-400"
+                        : "hover:bg-blue-700"
+                    }`}
+                  >
+                    {replyLoading ? "Posting Reply..." : "Post Reply"}
+                  </button>
+                </form>
+              )}
+            </div>
+          )}
 
+          {/* Back Button */}
+          <div className="flex gap-4 mt-6">
+            <button
+              className="px-6 py-3 bg-blue-600 text-white rounded-md shadow-lg hover:bg-blue-700 transition duration-300"
+              onClick={() => navigate("/user-posts")}
+            >
+              Back to Posts
+            </button>
+          </div>
+        </div>
+      </div>) :
+      (
+        <div className="flex items-center justify-center h-screen">
+          <p className="text-xl text-red-500 font-semibold">
+            This post is {post.status}.
+          </p>
+        </div>
+      )
+    }
+    </>
           {/* Back Button */}
           <div className="flex gap-4 mt-6">
             <button
