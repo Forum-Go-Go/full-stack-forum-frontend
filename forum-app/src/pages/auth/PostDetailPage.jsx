@@ -164,6 +164,7 @@ const PostDetailPage = () => {
   //Check Post statuses
   const isPostUnpublished = post.status === "Unpublished";
   const isPostDeleted = post.status === "Deleted";
+  const isPostBanned = post.status === "Banned";
 
   const default_image = "https://fa-forum-user-profile-bucket.s3.us-east-1.amazonaws.com/profile_images/default_user.png"
 
@@ -247,8 +248,8 @@ const PostDetailPage = () => {
         </div>
   
         {/* Add Reply Form */}
-        {isPostDeleted ? (
-          <p className="text-red-500">This post has been deleted.</p>
+        {isPostDeleted || isPostBanned ? (
+          <p className="text-red-500">This post has been {post.status}.</p>
         ) : (
           <div className="mt-6">
             <h3 className="text-xl font-semibold mb-3 text-gray-800">Add a Reply</h3>

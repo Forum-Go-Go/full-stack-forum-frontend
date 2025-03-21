@@ -47,6 +47,7 @@ const UserPostPage = () => {
     
   };
 
+
   return (
     <div className="flex flex-col items-center mt-16 p-6">
       <h1 className="text-3xl font-bold mb-4 font-lato">Your Posts</h1>
@@ -102,7 +103,7 @@ const UserPostPage = () => {
             </p>
             {postObj.post.status && <p>Status: {postObj.post.status}</p>}
 
-            {postObj.post.status !== "Deleted" && (
+            {postObj.post.status !== "Deleted" && postObj.post.status !== "Banned" && (
               <div className="flex gap-2 mt-4">
                 <button
                   className="px-3 py-1 bg-yellow-500 text-white rounded"
